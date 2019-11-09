@@ -12,33 +12,59 @@ import {
 } from "react-native";
 
 import { MonoText } from "../components/StyledText";
+import logo from "../assets/images/icon.png";
 
 import { Input, Button } from "react-native-elements";
+import { useNavigation } from "react-navigation-hooks";
 
-export default function LoginScreen() {
+export default function RegisterScreen(props) {
+  const { navigate } = useNavigation();
+
   return (
     <View style={styles.container}>
-      <Text style={{ fontSize: 32, marginBottom: 24 }}>Zaloguj się!</Text>
+      <Image source={logo} style={styles.logo} />
+      <View style={{ height: 40 }} />
+      <Text style={{ fontSize: 32, marginBottom: 24 }}>Zarejestruj się</Text>
+      <Input
+        placeholder="Imię i nazwisko"
+        inputContainerStyle={{ height: 60, marginVertical: 10 }}
+      />
+      <Input
+        secureTextEntry={true}
+        placeholder="Numer albumu"
+        inputContainerStyle={{ height: 60, marginVertical: 10 }}
+      />
+
       <Input
         placeholder="E-mail"
-        leftIcon={{ type: "font-awesome", name: "envelope" }}
         inputContainerStyle={{ height: 60, marginVertical: 10 }}
-        leftIconContainerStyle={styles.leftIconContainerStyle}
       />
       <Input
         secureTextEntry={true}
         placeholder="Hasło"
-        leftIcon={{ type: "font-awesome", name: "lock" }}
         inputContainerStyle={{ height: 60, marginVertical: 10 }}
-        leftIconContainerStyle={styles.leftIconContainerStyle}
       />
       <View style={{ height: 40 }} />
-      <Button title="LOGIN" containerStyle={styles.button} />
+      <Button
+        title="ZAREJESTRUJ SIĘ"
+        containerStyle={styles.button}
+        buttonStyle={styles.btn}
+      />
+
+      <View style={{ height: 40 }} />
+      <View>
+        <Text style={{ textAlign: "center" }}>Masz juz konto? </Text>
+        <TouchableOpacity onPress={() => navigate("Login")}>
+          <Text style={{ textAlign: "center", fontWeight: "bold" }}>
+            Zaloguj się
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
 
-LoginScreen.navigationOptions = {
+RegisterScreen.navigationOptions = {
   header: null
 };
 
@@ -63,12 +89,18 @@ const styles = StyleSheet.create({
     padding: 20
   },
   button: {
-    width: "100%",
-    textAlign: "center"
+    width: "100%"
+  },
+  btn: {
+    backgroundColor: "#3986ff"
   },
   leftIconContainerStyle: {
     width: 50,
     alignItems: "center",
     justifyContent: "center"
+  },
+  logo: {
+    width: 128,
+    height: 128
   }
 });

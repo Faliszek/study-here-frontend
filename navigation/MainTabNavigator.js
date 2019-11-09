@@ -5,8 +5,9 @@ import {
   createBottomTabNavigator
 } from "react-navigation";
 
-import TabBarIcon from "../components/TabBarIcon";
+// import TabBarIcon from "../components/TabBarIcon.ts";
 import LoginScreen from "../screens/LoginScreen";
+import RegisterScreen from "../screens/RegisterScreen";
 import LinksScreen from "../screens/LinksScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 
@@ -15,28 +16,33 @@ const config = Platform.select({
   default: {}
 });
 
-const HomeStack = createStackNavigator(
+const LoginStack = createStackNavigator(
   {
-    Home: LoginScreen
+    Login: LoginScreen,
+    Register: RegisterScreen
   },
   config
 );
 
-HomeStack.navigationOptions = {
-  tabBarLabel: "Home",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === "ios"
-          ? `ios-information-circle${focused ? "" : "-outline"}`
-          : "md-information-circle"
+// This does the trick
+LoginStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible;
+  if (navigation.state.routes.length >= 1) {
+    navigation.state.routes.map(route => {
+      if (route.routeName === "Login" || route.routeName === "Register") {
+        tabBarVisible = false;
+      } else {
+        tabBarVisible = true;
       }
-    />
-  )
+    });
+  }
+
+  return {
+    tabBarVisible
+  };
 };
 
-HomeStack.path = "";
+LoginStack.path = "";
 
 const LinksStack = createStackNavigator(
   {
@@ -47,12 +53,7 @@ const LinksStack = createStackNavigator(
 
 LinksStack.navigationOptions = {
   tabBarLabel: "Links",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-link" : "md-link"}
-    />
-  )
+  tabBarIcon: ({ focused }) => null
 };
 
 LinksStack.path = "";
@@ -66,18 +67,13 @@ const SettingsStack = createStackNavigator(
 
 SettingsStack.navigationOptions = {
   tabBarLabel: "Settings",
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={Platform.OS === "ios" ? "ios-options" : "md-options"}
-    />
-  )
+  tabBarIcon: ({ focused }) => null
 };
 
 SettingsStack.path = "";
 
 const tabNavigator = createBottomTabNavigator({
-  HomeStack,
+  LoginStack,
   LinksStack,
   SettingsStack
 });
