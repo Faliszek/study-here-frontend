@@ -16,7 +16,7 @@ const config = Platform.select({
   default: {}
 });
 
-const LoginStack = createStackNavigator(
+const AuthStack = createStackNavigator(
   {
     Login: LoginScreen,
     Register: RegisterScreen
@@ -25,7 +25,7 @@ const LoginStack = createStackNavigator(
 );
 
 // This does the trick
-LoginStack.navigationOptions = ({ navigation }) => {
+AuthStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible;
   if (navigation.state.routes.length >= 1) {
     navigation.state.routes.map(route => {
@@ -42,21 +42,21 @@ LoginStack.navigationOptions = ({ navigation }) => {
   };
 };
 
-LoginStack.path = "";
+AuthStack.path = "";
 
-const LinksStack = createStackNavigator(
+const HomeStack = createStackNavigator(
   {
     Links: LinksScreen
   },
   config
 );
 
-LinksStack.navigationOptions = {
+HomeStack.navigationOptions = {
   tabBarLabel: "Links",
   tabBarIcon: ({ focused }) => null
 };
 
-LinksStack.path = "";
+HomeStack.path = "";
 
 const SettingsStack = createStackNavigator(
   {
@@ -73,9 +73,8 @@ SettingsStack.navigationOptions = {
 SettingsStack.path = "";
 
 const tabNavigator = createBottomTabNavigator({
-  LoginStack,
-  LinksStack,
-  SettingsStack
+  AuthStack,
+  HomeStack
 });
 
 tabNavigator.path = "";
