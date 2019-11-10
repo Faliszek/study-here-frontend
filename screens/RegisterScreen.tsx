@@ -2,54 +2,123 @@ import * as WebBrowser from "expo-web-browser";
 import React from "react";
 import {
   Image,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  TextInput
+  ScrollView
 } from "react-native";
 
-import { MonoText } from "../components/StyledText";
+//eslint-disable-next-line
 import logo from "../assets/images/icon.png";
 
-import { Input, Button } from "react-native-elements";
+import { Button } from "react-native-elements";
 import { useNavigation } from "react-navigation-hooks";
 
-export default function RegisterScreen(props) {
+import { Formik } from "formik";
+import * as yup from "yup";
+
+import { FormItem, Input } from "../components";
+
+const schema = yup.object({
+  name: yup.string().required("Imię i nazwisko jest wymagane"),
+  studentNumber: yup.string().required("Numer albumu jest wymagany"),
+  email: yup
+    .string()
+    .required("Email jest wymagany")
+    .email("Podany e-mail jest niepoprawny"),
+  password: yup
+    .string()
+    .required("Hasło jest wymagane")
+    .min(6, "Hasło powinno zawierać conajmniej 6 znaków")
+});
+
+const initialValues = {
+  name: "",
+  studentNumber: "",
+  email: "",
+  password: ""
+};
+
+export default function RegisterScreen() {
   const { navigate } = useNavigation();
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Image source={logo} style={styles.logo} />
       <View style={{ height: 40 }} />
       <Text style={{ fontSize: 32, marginBottom: 24 }}>Zarejestruj się</Text>
-      <Input
-        placeholder="Imię i nazwisko"
-        inputContainerStyle={{ height: 60, marginVertical: 10 }}
-      />
-      <Input
-        secureTextEntry={true}
-        placeholder="Numer albumu"
-        inputContainerStyle={{ height: 60, marginVertical: 10 }}
-      />
-
-      <Input
-        placeholder="E-mail"
-        inputContainerStyle={{ height: 60, marginVertical: 10 }}
-      />
-      <Input
-        secureTextEntry={true}
-        placeholder="Hasło"
-        inputContainerStyle={{ height: 60, marginVertical: 10 }}
-      />
-      <View style={{ height: 40 }} />
-      <Button
-        title="ZAREJESTRUJ SIĘ"
-        containerStyle={styles.button}
-        buttonStyle={styles.btn}
-      />
+      <Formik
+        onSubmit={values => console.log(values)}
+        validationSchema={schema}
+        initialValues={initialValues}
+        validateOnChange
+      >
+        {({ handleChange, handleBlur, values, errors, touched }) => {
+          return (
+            <>
+              <FormItem error={errors.name} touched={touched.name}>
+                {({ hasError }) => (
+                  <Input
+                    value={values.name}
+                    hasError={hasError}
+                    onChange={handleChange("name")}
+                    label={"Imię i nazwisko"}
+                    placeholder={"Imię i nazwisko"}
+                    onBlur={handleBlur("name")}
+                  />
+                )}
+              </FormItem>
+              <FormItem
+                error={errors.studentNumber}
+                touched={touched.studentNumber}
+              >
+                {({ hasError }) => (
+                  <Input
+                    value={values.studentNumber}
+                    hasError={hasError}
+                    onChange={handleChange("studentNumber")}
+                    label={"Numer albumu"}
+                    placeholder={"Numer albumu"}
+                    onBlur={handleBlur("studentNumber")}
+                  />
+                )}
+              </FormItem>
+              <FormItem error={errors.email} touched={touched.email}>
+                {({ hasError }) => (
+                  <Input
+                    value={values.email}
+                    hasError={hasError}
+                    onChange={handleChange("email")}
+                    label={"Email"}
+                    placeholder={"Email"}
+                    onBlur={handleBlur("email")}
+                  />
+                )}
+              </FormItem>
+              <FormItem error={errors.password} touched={touched.password}>
+                {({ hasError }) => (
+                  <Input
+                    value={values.password}
+                    hasError={hasError}
+                    onChange={handleChange("password")}
+                    label={"Hasło"}
+                    placeholder={"Hasło"}
+                    onBlur={handleBlur("password")}
+                    secureTextEntry={true}
+                  />
+                )}
+              </FormItem>
+              <View style={{ height: 40 }} />
+              <Button
+                title="ZAREJESTRUJ SIĘ"
+                containerStyle={styles.button}
+                buttonStyle={styles.btn}
+              />
+            </>
+          );
+        }}
+      </Formik>
 
       <View style={{ height: 40 }} />
       <View>
@@ -60,7 +129,7 @@ export default function RegisterScreen(props) {
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -68,21 +137,8 @@ RegisterScreen.navigationOptions = {
   header: null
 };
 
-function handleLearnMorePress() {
-  WebBrowser.openBrowserAsync(
-    "https://docs.expo.io/versions/latest/workflow/development-mode/"
-  );
-}
-
-function handleHelpPress() {
-  WebBrowser.openBrowserAsync(
-    "https://docs.expo.io/versions/latest/workflow/up-and-running/#cant-see-your-changes"
-  );
-}
-
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",

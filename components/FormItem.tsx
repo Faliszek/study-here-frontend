@@ -2,16 +2,17 @@ import React, { ReactChildren, ReactElement } from "react";
 import { View, StyleSheet, Text } from "react-native";
 
 interface Props {
-  children: ReactElement;
+  children: ({ hasError: boolean }) => ReactElement;
   error?: string;
+  touched: boolean;
 }
 
 export function FormItem(props: Props) {
-  const hasError = !!props.error;
+  const hasError = Boolean(props.error) && Boolean(props.touched);
   return (
     <View style={styles.container}>
-      {props.children}
-      <View style={{ height: 20 }}>
+      {props.children({ hasError: hasError })}
+      <View style={{ height: 20, paddingLeft: 10, paddingTop: 3 }}>
         {hasError && <Text style={{ color: "red" }}>{props.error}</Text>}
       </View>
     </View>
@@ -20,6 +21,7 @@ export function FormItem(props: Props) {
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%"
+    width: "100%",
+    marginBottom: 12
   }
 });

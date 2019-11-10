@@ -6,12 +6,15 @@ import * as yup from "yup";
 
 import logo from "../assets/images/icon.png";
 
-import { Input, Button } from "react-native-elements";
+import { Button } from "react-native-elements";
 import { useNavigation } from "react-navigation-hooks";
-import { FormItem } from "../components";
+import { FormItem, Input } from "../components";
 
 const schema = yup.object({
-  email: yup.string().required("Email jest wymagany"),
+  email: yup
+    .string()
+    .required("Email jest wymagany")
+    .email("Podany e-mail jest niepoprawny"),
   password: yup.string().required("Hasło jest wymagane")
 });
 
@@ -28,34 +31,42 @@ export default function LoginScreen() {
       validationSchema={schema}
       initialValues={initialValues}
       onSubmit={values => console.log(values)}
+      validateOnChange
     >
-      {({ handleChange, values, errors }) => {
-        console.log(values, errors);
+      {({ handleChange, handleBlur, values, errors, touched }) => {
         return (
           <View style={styles.container}>
             <Image source={logo} style={styles.logo} />
             <View style={{ height: 40 }} />
             <Text style={{ fontSize: 32, marginBottom: 24 }}>Zaloguj się!</Text>
-            <FormItem error={errors.email}>
-              <Input
-                placeholder="E-mail"
-                leftIcon={{ type: "font-awesome", name: "envelope" }}
-                inputContainerStyle={{ height: 60 }}
-                leftIconContainerStyle={styles.leftIconContainerStyle}
-                onChangeText={handleChange("email")}
-                value={values.email}
-              />
+            <FormItem error={errors.email} touched={touched.email}>
+              {({ hasError }) => {
+                return (
+                  <Input
+                    value={values.email}
+                    hasError={hasError}
+                    onChange={handleChange("email")}
+                    label={"Email"}
+                    placeholder={"Email"}
+                    onBlur={handleBlur("email")}
+                    icon="email"
+                  />
+                );
+              }}
             </FormItem>
-            <FormItem error={errors.password}>
-              <Input
-                secureTextEntry={true}
-                placeholder="Hasło"
-                leftIcon={{ type: "font-awesome", name: "lock" }}
-                inputContainerStyle={{ height: 60 }}
-                leftIconContainerStyle={styles.leftIconContainerStyle}
-                onChangeText={handleChange("password")}
-                value={values.password}
-              />
+            <FormItem error={errors.password} touched={touched.password}>
+              {({ hasError }) => (
+                <Input
+                  value={values.password}
+                  hasError={hasError}
+                  onChange={handleChange("password")}
+                  label={"Hasło"}
+                  placeholder={"Hasło"}
+                  onBlur={handleBlur("password")}
+                  secureTextEntry={true}
+                  icon="lock"
+                />
+              )}
             </FormItem>
             <View style={{ height: 40 }} />
             <Button
@@ -100,9 +111,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#3986ff"
   },
   leftIconContainerStyle: {
-    width: 50,
-    alignItems: "center",
-    justifyContent: "center"
+    paddingRight: 20
   },
   logo: {
     width: 128,
