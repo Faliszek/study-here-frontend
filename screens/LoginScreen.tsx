@@ -10,6 +10,8 @@ import { Button } from "react-native-elements";
 import { useNavigation } from "react-navigation-hooks";
 import { FormItem, Input } from "../components";
 
+import { RegisterPushTokenAccess } from '../components';
+
 const schema = yup.object({
   email: yup
     .string()
@@ -27,6 +29,8 @@ export default function LoginScreen() {
   const { navigate } = useNavigation();
 
   return (
+    <>
+    <RegisterPushTokenAccess />
     <Formik
       validationSchema={schema}
       initialValues={initialValues}
@@ -89,6 +93,7 @@ export default function LoginScreen() {
         );
       }}
     </Formik>
+    </>
   );
 }
 
