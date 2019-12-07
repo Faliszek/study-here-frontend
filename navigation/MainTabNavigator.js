@@ -10,6 +10,7 @@ import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import LinksScreen from "../screens/LinksScreen";
 import SettingsScreen from "../screens/SettingsScreen";
+import MainScreen from "../screens/MainScreen";
 
 const config = Platform.select({
   web: { headerMode: "screen" },
@@ -24,7 +25,6 @@ const AuthStack = createStackNavigator(
   config
 );
 
-// This does the trick
 AuthStack.navigationOptions = ({ navigation }) => {
   let tabBarVisible;
   if (navigation.state.routes.length >= 1) {
@@ -42,39 +42,38 @@ AuthStack.navigationOptions = ({ navigation }) => {
   };
 };
 
-AuthStack.path = "";
+AuthStack.path = "/auth";
 
 const HomeStack = createStackNavigator(
   {
+    Main: MainScreen,
     Links: LinksScreen
   },
   config
 );
 
-HomeStack.navigationOptions = {
-  tabBarLabel: "Links",
-  tabBarIcon: ({ focused }) => null
+HomeStack.navigationOptions = ({ navigation }) => {
+  let tabBarVisible;
+  if (navigation.state.routes.length >= 1) {
+    navigation.state.routes.map(route => {
+      if (route.routeName === "Main") {
+        tabBarVisible = false;
+      } else {
+        tabBarVisible = true;
+      }
+    });
+  }
+
+  return {
+    tabBarVisible
+  };
 };
 
 HomeStack.path = "";
 
-const SettingsStack = createStackNavigator(
-  {
-    Settings: SettingsScreen
-  },
-  config
-);
-
-SettingsStack.navigationOptions = {
-  tabBarLabel: "Settings",
-  tabBarIcon: ({ focused }) => null
-};
-
-SettingsStack.path = "";
-
 const tabNavigator = createBottomTabNavigator({
-  AuthStack,
-  HomeStack
+  HomeStack,
+  AuthStack
 });
 
 tabNavigator.path = "";
