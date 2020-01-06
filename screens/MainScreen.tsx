@@ -4,17 +4,11 @@ import {
   View,
   StyleSheet,
   // TouchableOpacity,
-  ScrollView,
-  KeyboardAvoidingView
+  ScrollView
 } from "react-native";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-
-// import { Divider, Overlay, Input } from "react-native-elements";
-
-import { Paragraph, Button, FAB, TextInput, Surface } from "react-native-paper";
-
-import Layout from "../constants/Layout";
+import { FAB, TextInput, Surface } from "react-native-paper";
 
 export default function MainScreen() {
   // const nav = useNavigation();
@@ -24,20 +18,23 @@ export default function MainScreen() {
 
   // console.log(nav);
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
-      <View style={styles.container}>
-        <Surface
-          style={{
-            top: visible ? 0 : -400,
-            backgroundColor: "#fff",
-            elevation: 4,
-            height: 400,
-            width: "100%",
-            padding: 16,
-            position: "absolute"
-          }}
-        >
-          <View style={{ flex: 1 }}>
+    <View style={styles.container}>
+      <Surface
+        style={{
+          top: visible ? 0 : -400,
+          backgroundColor: "#fff",
+          elevation: 4,
+          height: 400,
+          width: "100%",
+          padding: 16,
+          position: "absolute"
+        }}
+      >
+        <View style={{ flex: 1 }}>
+          <KeyboardAwareScrollView
+            style={styles.container}
+            enableOnAndroid={true}
+          >
             <TextInput
               mode="outlined"
               style={[styles.inputContainerStyle, styles.textArea]}
@@ -49,121 +46,108 @@ export default function MainScreen() {
               onBlur={() => setVisible(_ => false)}
               ref={ref}
             />
+          </KeyboardAwareScrollView>
+        </View>
+        <View style={styles.btnRow}>
+          <View>
+            <FAB
+              small
+              icon="send"
+              disabled={newPost.length === 0}
+              label="Dodaj post"
+              onPress={() => {
+                setVisible(_ => false);
+                ref.current && ref.current.blur();
+                console.log(ref);
+              }}
+            ></FAB>
           </View>
-          <View style={styles.btnRow}>
-            <View>
-              <FAB
-                small
-                icon="send"
-                disabled={newPost.length === 0}
-                label="Dodaj post"
-                onPress={() => {
-                  setVisible(_ => false);
-                  ref.current && ref.current.blur();
-                  console.log(ref);
-                }}
-              ></FAB>
-            </View>
-          </View>
-        </Surface>
+        </View>
+      </Surface>
 
-        <ScrollView
-          style={{
-            height: Layout.height,
-            top: visible ? 400 : 0,
-            position: "absolute"
-          }}
-        >
-          <Text>
-            Dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
-            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
-            quis efficitur lectus augue id ante. Praesent venenatis varius
-            placerat
-          </Text>
+      <ScrollView
+        style={{
+          top: visible ? 400 : 0
+        }}
+      >
+        <Text>
+          Dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
+          sit amet scelerisque euismod, tortor libero luctus turpis, quis
+          efficitur lectus augue id ante. Praesent venenatis varius placerat
+        </Text>
 
-          <Text>
-            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
-            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
-            quis efficitur lectus augue id ante. Praesent venenatis varius
-            placerat
-          </Text>
+        <Text>
+          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
+          sit amet scelerisque euismod, tortor libero luctus turpis, quis
+          efficitur lectus augue id ante. Praesent venenatis varius placerat
+        </Text>
 
-          <Text>
-            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
-            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
-            quis efficitur lectus augue id ante. Praesent venenatis varius
-            placerat
-          </Text>
+        <Text>
+          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
+          sit amet scelerisque euismod, tortor libero luctus turpis, quis
+          efficitur lectus augue id ante. Praesent venenatis varius placerat
+        </Text>
 
-          <Text>
-            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
-            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
-            quis efficitur lectus augue id ante. Praesent venenatis varius
-            placerat
-          </Text>
+        <Text>
+          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
+          sit amet scelerisque euismod, tortor libero luctus turpis, quis
+          efficitur lectus augue id ante. Praesent venenatis varius placerat
+        </Text>
 
-          <Text>
-            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
-            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
-            quis efficitur lectus augue id ante. Praesent venenatis varius
-            placerat
-          </Text>
+        <Text>
+          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
+          sit amet scelerisque euismod, tortor libero luctus turpis, quis
+          efficitur lectus augue id ante. Praesent venenatis varius placerat
+        </Text>
 
-          <Text>
-            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
-            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
-            quis efficitur lectus augue id ante. Praesent venenatis varius
-            placerat
-          </Text>
+        <Text>
+          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
+          sit amet scelerisque euismod, tortor libero luctus turpis, quis
+          efficitur lectus augue id ante. Praesent venenatis varius placerat
+        </Text>
 
-          <Text>
-            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
-            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
-            quis efficitur lectus augue id ante. Praesent venenatis varius
-            placerat
-          </Text>
+        <Text>
+          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
+          sit amet scelerisque euismod, tortor libero luctus turpis, quis
+          efficitur lectus augue id ante. Praesent venenatis varius placerat
+        </Text>
 
-          <Text>
-            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
-            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
-            quis efficitur lectus augue id ante. Praesent venenatis varius
-            placerat
-          </Text>
+        <Text>
+          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
+          sit amet scelerisque euismod, tortor libero luctus turpis, quis
+          efficitur lectus augue id ante. Praesent venenatis varius placerat
+        </Text>
 
-          <Text>
-            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
-            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
-            quis efficitur lectus augue id ante. Praesent venenatis varius
-            placerat
-          </Text>
+        <Text>
+          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
+          sit amet scelerisque euismod, tortor libero luctus turpis, quis
+          efficitur lectus augue id ante. Praesent venenatis varius placerat
+        </Text>
 
-          <Text>
-            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
-            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
-            quis efficitur lectus augue id ante. Praesent venenatis varius
-            placerat
-          </Text>
+        <Text>
+          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
+          sit amet scelerisque euismod, tortor libero luctus turpis, quis
+          efficitur lectus augue id ante. Praesent venenatis varius placerat
+        </Text>
 
-          <Text>
-            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
-            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
-            quis efficitur lectus augue id ante. Praesent venenatis varius
-            placerat
-          </Text>
-        </ScrollView>
-        {/* 
+        <Text>
+          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
+          sit amet scelerisque euismod, tortor libero luctus turpis, quis
+          efficitur lectus augue id ante. Praesent venenatis varius placerat
+        </Text>
+      </ScrollView>
+      {/* 
       <Dialog onDismiss={() => setVisible(_ => false)} visible={visible}>
         <Dialog.Title>Nowy post</Dialog.Title>
      
       </Dialog> */}
 
-        <FAB
-          style={styles.fab}
-          icon={visible ? "close" : "plus"}
-          onPress={() => setVisible(_ => !visible)}
-        />
-      </View>
-    </KeyboardAvoidingView>
+      <FAB
+        style={styles.fab}
+        icon={visible ? "close" : "plus"}
+        onPress={() => setVisible(_ => !visible)}
+      />
+    </View>
   );
 }
 
@@ -191,9 +175,6 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    // flexDirection: "column",
-    // alignItems: "center",
-    // justifyContent: "center",
     position: "relative",
     flex: 1
   }
