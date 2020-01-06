@@ -8,15 +8,36 @@ import {
 } from "react-native";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { FAB, TextInput, Surface } from "react-native-paper";
+import { FAB, TextInput, Surface, Avatar } from "react-native-paper";
+
+const posts = [
+  {
+    id: "1",
+    author: {
+      firstName: "Thomas",
+      lastName: "Shelby"
+    },
+
+    content: `Dolor sit amet, consectetur adipiscing elit. \n\nVestibulum semper, lectus sit amet scelerisque euismod, tortor libero luctus turpis, quis \nefficitur lectus augue id ante. Praesent venenatis varius placerat`,
+    date: 19292939123
+  },
+  {
+    id: "2",
+    author: {
+      firstName: "Thomas",
+      lastName: "Shelby"
+    },
+
+    content: `Dolor sit amet, consectetur adipiscing elit. \n\nVestibulum semper, lectus sit amet scelerisque euismod, tortor libero luctus turpis, quis \nefficitur lectus augue id ante. Praesent venenatis varius placerat`,
+    date: 19292939123
+  }
+];
 
 export default function MainScreen() {
-  // const nav = useNavigation();
   const [visible, setVisible] = React.useState(false);
   const [newPost, setNewPost] = React.useState("");
   const ref = React.useRef(null);
 
-  // console.log(nav);
   return (
     <View style={styles.container}>
       <Surface
@@ -70,77 +91,15 @@ export default function MainScreen() {
           top: visible ? 400 : 0
         }}
       >
-        <Text>
-          Dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
-          sit amet scelerisque euismod, tortor libero luctus turpis, quis
-          efficitur lectus augue id ante. Praesent venenatis varius placerat
-        </Text>
-
-        <Text>
-          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
-          sit amet scelerisque euismod, tortor libero luctus turpis, quis
-          efficitur lectus augue id ante. Praesent venenatis varius placerat
-        </Text>
-
-        <Text>
-          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
-          sit amet scelerisque euismod, tortor libero luctus turpis, quis
-          efficitur lectus augue id ante. Praesent venenatis varius placerat
-        </Text>
-
-        <Text>
-          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
-          sit amet scelerisque euismod, tortor libero luctus turpis, quis
-          efficitur lectus augue id ante. Praesent venenatis varius placerat
-        </Text>
-
-        <Text>
-          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
-          sit amet scelerisque euismod, tortor libero luctus turpis, quis
-          efficitur lectus augue id ante. Praesent venenatis varius placerat
-        </Text>
-
-        <Text>
-          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
-          sit amet scelerisque euismod, tortor libero luctus turpis, quis
-          efficitur lectus augue id ante. Praesent venenatis varius placerat
-        </Text>
-
-        <Text>
-          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
-          sit amet scelerisque euismod, tortor libero luctus turpis, quis
-          efficitur lectus augue id ante. Praesent venenatis varius placerat
-        </Text>
-
-        <Text>
-          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
-          sit amet scelerisque euismod, tortor libero luctus turpis, quis
-          efficitur lectus augue id ante. Praesent venenatis varius placerat
-        </Text>
-
-        <Text>
-          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
-          sit amet scelerisque euismod, tortor libero luctus turpis, quis
-          efficitur lectus augue id ante. Praesent venenatis varius placerat
-        </Text>
-
-        <Text>
-          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
-          sit amet scelerisque euismod, tortor libero luctus turpis, quis
-          efficitur lectus augue id ante. Praesent venenatis varius placerat
-        </Text>
-
-        <Text>
-          dolor sit amet, consectetur adipiscing elit. Vestibulum semper, lectus
-          sit amet scelerisque euismod, tortor libero luctus turpis, quis
-          efficitur lectus augue id ante. Praesent venenatis varius placerat
-        </Text>
+        {posts.map(p => (
+          <Surface key={p.id} style={{ elevation: 2, padding: 8 }}>
+            <View>
+              <Text>{p.author.firstName + " " + p.author.lastName}</Text>
+            </View>
+            <Text>{p.content} </Text>
+          </Surface>
+        ))}
       </ScrollView>
-      {/* 
-      <Dialog onDismiss={() => setVisible(_ => false)} visible={visible}>
-        <Dialog.Title>Nowy post</Dialog.Title>
-     
-      </Dialog> */}
 
       <FAB
         style={styles.fab}
@@ -154,6 +113,11 @@ export default function MainScreen() {
 MainScreen.navigationOptions = {};
 
 const styles = StyleSheet.create({
+  container: {
+    position: "relative",
+    flex: 1,
+    backgroundColor: "#fff"
+  },
   fab: {
     position: "absolute",
     marginHorizontal: 16,
@@ -172,10 +136,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     bottom: 0
-  },
-
-  container: {
-    position: "relative",
-    flex: 1
   }
 });
