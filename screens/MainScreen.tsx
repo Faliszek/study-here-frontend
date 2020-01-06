@@ -1,6 +1,5 @@
 import React from "react";
 import {
-  Text,
   View,
   StyleSheet,
   // TouchableOpacity,
@@ -8,12 +7,15 @@ import {
 } from "react-native";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { FAB, TextInput, Surface, Avatar } from "react-native-paper";
+import { FAB, TextInput, Surface } from "react-native-paper";
 
-const posts = [
+import { Post } from "./components/Post";
+
+const posts: Array<Post> = [
   {
     id: "1",
     author: {
+      id: "1",
       firstName: "Thomas",
       lastName: "Shelby"
     },
@@ -24,6 +26,7 @@ const posts = [
   {
     id: "2",
     author: {
+      id: "1",
       firstName: "Thomas",
       lastName: "Shelby"
     },
@@ -38,6 +41,11 @@ export default function MainScreen() {
   const [newPost, setNewPost] = React.useState("");
   const ref = React.useRef(null);
 
+  React.useEffect(() => {
+    if (visible && ref.current) {
+      ref.current.focus();
+    }
+  }, [visible]);
   return (
     <View style={styles.container}>
       <Surface
@@ -79,7 +87,6 @@ export default function MainScreen() {
               onPress={() => {
                 setVisible(_ => false);
                 ref.current && ref.current.blur();
-                console.log(ref);
               }}
             ></FAB>
           </View>
@@ -92,12 +99,7 @@ export default function MainScreen() {
         }}
       >
         {posts.map(p => (
-          <Surface key={p.id} style={{ elevation: 2, padding: 8 }}>
-            <View>
-              <Text>{p.author.firstName + " " + p.author.lastName}</Text>
-            </View>
-            <Text>{p.content} </Text>
-          </Surface>
+          <Post post={p} />
         ))}
       </ScrollView>
 

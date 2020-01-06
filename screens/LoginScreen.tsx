@@ -7,7 +7,9 @@ import * as yup from "yup";
 import logo from "../assets/images/icon.png";
 
 import { Button } from "react-native-elements";
-import { FormItem, Input } from "../components";
+import { FormItem } from "../components";
+
+import { TextInput } from "react-native-paper";
 
 const schema = yup.object({
   email: yup
@@ -39,10 +41,10 @@ export default function LoginScreen() {
             <FormItem error={errors.email} touched={touched.email}>
               {({ hasError }) => {
                 return (
-                  <Input
+                  <TextInput
                     value={values.email}
                     hasError={hasError}
-                    onChange={handleChange("email")}
+                    onChangeText={handleChange("email")}
                     label={"Email"}
                     placeholder={"Email"}
                     onBlur={handleBlur("email")}
