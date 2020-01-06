@@ -1,16 +1,18 @@
 import React from "react";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { Formik } from "formik";
 import * as yup from "yup";
 
 import logo from "../assets/images/icon.png";
 
-import { Button } from "react-native-elements";
-import { FormItem } from "../components";
+import { FormItem } from "./components/FormItem";
 
-import { TextInput } from "react-native-paper";
+import { Button, TextInput, Text, Caption, Title } from "react-native-paper";
 
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
+import { useNavigation } from "@react-navigation/native";
 const schema = yup.object({
   email: yup
     .string()
@@ -25,6 +27,7 @@ const initialValues = {
 };
 
 export default function LoginScreen() {
+  const nav = useNavigation();
   return (
     <Formik
       validationSchema={schema}
@@ -34,58 +37,54 @@ export default function LoginScreen() {
     >
       {({ handleChange, handleBlur, values, errors, touched }) => {
         return (
-          <View style={styles.container}>
+          <KeyboardAwareScrollView
+            contentContainerStyle={styles.container}
+            enableOnAndroid={true}
+          >
             <Image source={logo} style={styles.logo} />
             <View style={{ height: 40 }} />
-            <Text style={{ fontSize: 32, marginBottom: 24 }}>Zaloguj się!</Text>
+            <Title style={{ fontSize: 32, marginBottom: 24 }}>
+              Zaloguj się!
+            </Title>
             <FormItem error={errors.email} touched={touched.email}>
               {({ hasError }) => {
                 return (
                   <TextInput
                     value={values.email}
-                    hasError={hasError}
                     onChangeText={handleChange("email")}
                     label={"Email"}
                     placeholder={"Email"}
                     onBlur={handleBlur("email")}
-                    icon="email"
+                    error={hasError}
                   />
                 );
               }}
             </FormItem>
             <FormItem error={errors.password} touched={touched.password}>
               {({ hasError }) => (
-                <Input
+                <TextInput
                   value={values.password}
-                  hasError={hasError}
-                  onChange={handleChange("password")}
+                  onChangeText={handleChange("password")}
                   label={"Hasło"}
                   placeholder={"Hasło"}
                   onBlur={handleBlur("password")}
                   secureTextEntry={true}
-                  icon="lock"
+                  error={hasError}
                 />
               )}
             </FormItem>
             <View style={{ height: 40 }} />
-            <Button
-              title="ZALOGUJ SIĘ"
-              containerStyle={styles.button}
-              buttonStyle={styles.btn}
-            />
+            <Button mode="contained">Zaloguj się</Button>
             <View style={{ height: 40 }} />
             <View>
-              <Text style={{ textAlign: "center" }}>
+              <Caption style={{ textAlign: "center" }}>
                 Nie masz jeszcze konta?{" "}
-              </Text>
-              {/* <TouchableOpacity onPress={() => navigate("Register")}> */}
-              <TouchableOpacity onPress={console.log}>
-                <Text style={{ textAlign: "center", fontWeight: "bold" }}>
-                  Zarejestruj się
-                </Text>
-              </TouchableOpacity>
+              </Caption>
+              <Button onPress={() => nav.navigate("Register")}>
+                <Text style={{ textAlign: "center" }}>Zarejestruj się</Text>
+              </Button>
             </View>
-          </View>
+          </KeyboardAwareScrollView>
         );
       }}
     </Formik>

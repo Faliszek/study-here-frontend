@@ -2,7 +2,7 @@ import { AppLoading } from "expo";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import React, { useState } from "react";
-import { Platform, StatusBar, StyleSheet, View } from "react-native";
+import { Platform, StatusBar, Text, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 // import AppNavigator from "./navigation/AppNavigator";
@@ -15,8 +15,6 @@ import RegisterScreen from "./screens/RegisterScreen";
 
 // import { BottomNavigation } from "react-native-paper";
 
-import { createStackNavigator } from "@react-navigation/stack";
-
 import {
   Appbar,
   BottomNavigation,
@@ -24,6 +22,10 @@ import {
   Theme,
   Provider as PaperProvider
 } from "react-native-paper";
+
+import { NavigationNativeContainer } from "@react-navigation/native";
+
+import { createStackNavigator } from "@react-navigation/stack";
 
 const Stack = createStackNavigator();
 
@@ -55,7 +57,9 @@ export default function App(props) {
       <PaperProvider theme={theme}>
         <View style={styles.container}>
           {/* {Platform.OS === "ios" && <StatusBar barStyle="default" />} */}
-          <Appbar.Header>
+
+          {/*INSIDE STACK*/}
+          {/* <Appbar.Header>
             <Appbar.Content title="Title" />
             <Appbar.Action icon="dots-vertical" onPress={console.log} />
           </Appbar.Header>
@@ -64,7 +68,16 @@ export default function App(props) {
             navigationState={{ index: routeIndex, routes }}
             onIndexChange={routeIndex => setRouteIndex(routeIndex)}
             renderScene={renderScene}
-          />
+          /> */}
+
+          {/*AUTH STACK*/}
+
+          <NavigationNativeContainer>
+            <Stack.Navigator initialRouteName={"Login"}>
+              <Stack.Screen name="Login" component={LoginScreen} />
+              <Stack.Screen name="Register" component={RegisterScreen} />
+            </Stack.Navigator>
+          </NavigationNativeContainer>
         </View>
       </PaperProvider>
     );

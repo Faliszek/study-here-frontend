@@ -1,23 +1,18 @@
 import * as WebBrowser from "expo-web-browser";
 import React from "react";
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  ScrollView
-} from "react-native";
+import { Image, StyleSheet, Text, View, ScrollView } from "react-native";
 
 //eslint-disable-next-line
 import logo from "../assets/images/icon.png";
 
-import { Button } from "react-native-elements";
-
 import { Formik } from "formik";
 import * as yup from "yup";
 
-import { FormItem, Input } from "../components";
+import { FormItem } from "./components/FormItem";
+import { Button, TextInput } from "react-native-paper";
+import { useNavigation } from "@react-navigation/native";
+
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const schema = yup.object({
   name: yup.string().required("Imię i nazwisko jest wymagane"),
@@ -40,6 +35,7 @@ const initialValues = {
 };
 
 export default function RegisterScreen() {
+  const nav = useNavigation();
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image source={logo} style={styles.logo} />
@@ -56,10 +52,10 @@ export default function RegisterScreen() {
             <>
               <FormItem error={errors.name} touched={touched.name}>
                 {({ hasError }) => (
-                  <Input
+                  <TextInput
                     value={values.name}
-                    hasError={hasError}
-                    onChange={handleChange("name")}
+                    error={hasError}
+                    onChangeText={handleChange("name")}
                     label={"Imię i nazwisko"}
                     placeholder={"Imię i nazwisko"}
                     onBlur={handleBlur("name")}
@@ -71,10 +67,10 @@ export default function RegisterScreen() {
                 touched={touched.studentNumber}
               >
                 {({ hasError }) => (
-                  <Input
+                  <TextInput
                     value={values.studentNumber}
-                    hasError={hasError}
-                    onChange={handleChange("studentNumber")}
+                    error={hasError}
+                    onChangeText={handleChange("studentNumber")}
                     label={"Numer albumu"}
                     placeholder={"Numer albumu"}
                     onBlur={handleBlur("studentNumber")}
@@ -83,10 +79,10 @@ export default function RegisterScreen() {
               </FormItem>
               <FormItem error={errors.email} touched={touched.email}>
                 {({ hasError }) => (
-                  <Input
+                  <TextInput
                     value={values.email}
-                    hasError={hasError}
-                    onChange={handleChange("email")}
+                    error={hasError}
+                    onChangeText={handleChange("email")}
                     label={"Email"}
                     placeholder={"Email"}
                     onBlur={handleBlur("email")}
@@ -95,10 +91,10 @@ export default function RegisterScreen() {
               </FormItem>
               <FormItem error={errors.password} touched={touched.password}>
                 {({ hasError }) => (
-                  <Input
+                  <TextInput
                     value={values.password}
-                    hasError={hasError}
-                    onChange={handleChange("password")}
+                    onChangeText={handleChange("password")}
+                    error={hasError}
                     label={"Hasło"}
                     placeholder={"Hasło"}
                     onBlur={handleBlur("password")}
@@ -107,11 +103,7 @@ export default function RegisterScreen() {
                 )}
               </FormItem>
               <View style={{ height: 40 }} />
-              <Button
-                title="ZAREJESTRUJ SIĘ"
-                containerStyle={styles.button}
-                buttonStyle={styles.btn}
-              />
+              <Button mode="contained">Zarejestruj się</Button>
             </>
           );
         }}
@@ -119,13 +111,8 @@ export default function RegisterScreen() {
 
       <View style={{ height: 40 }} />
       <View>
-        <Text style={{ textAlign: "center" }}>Masz juz konto? </Text>
-        {/* <TouchableOpacity onPress={() => navigate("Login")}> */}
-        <TouchableOpacity onPress={console.log}>
-          <Text style={{ textAlign: "center", fontWeight: "bold" }}>
-            Zaloguj się
-          </Text>
-        </TouchableOpacity>
+        <Text style={{ textAlign: "center" }}>Masz już konto? </Text>
+        <Button onPress={() => nav.navigate("Login")}>Zaloguj się</Button>
       </View>
     </ScrollView>
   );

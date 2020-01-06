@@ -16,6 +16,7 @@
     "@expo/vector-icons": "^10.0.3",
     "@react-native-community/masked-view": "^0.1.5",
     "@react-navigation/native": "^5.0.0-alpha.22",
+    "@react-navigation/native-stack": "^5.0.0-alpha.22",
     "@react-navigation/stack": "^5.0.0-alpha.54",
     "@react-navigation/web": "^1.0.0-alpha.9",
     "@types/yup": "^0.26.24",
