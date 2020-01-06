@@ -3,175 +3,198 @@ import {
   Text,
   View,
   StyleSheet,
-  TouchableOpacity,
-  ScrollView
+  // TouchableOpacity,
+  ScrollView,
+  KeyboardAvoidingView
 } from "react-native";
 
-import { useNavigation } from "react-navigation-hooks";
-import { Divider, Overlay, Button, Input } from "react-native-elements";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+
+// import { Divider, Overlay, Input } from "react-native-elements";
+
+import { Paragraph, Button, FAB, TextInput, Surface } from "react-native-paper";
+
 import Layout from "../constants/Layout";
 
 export default function MainScreen() {
-  //   const { navigate } = useNavigation();
+  // const nav = useNavigation();
   const [visible, setVisible] = React.useState(false);
+  const [newPost, setNewPost] = React.useState("");
+  const ref = React.useRef(null);
 
+  // console.log(nav);
   return (
-    <View style={styles.container}>
-      <View style={styles.bar}>
-        <Text style={styles.barTitle}>iStudyHere</Text>
-      </View>
-      <ScrollView style={styles.main}>
-        <Text>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum
-          semper, lectus sit amet scelerisque euismod, tortor libero luctus
-          turpis, quis efficitur lectus augue id ante. Praesent venenatis varius
-          placerat. Fusce neque metus, hendrerit at justo in, accumsan ultrices
-          sapien. Aliquam erat volutpat. Integer varius fringilla facilisis.
-          Vivamus a placerat justo. Donec lorem augue, egestas at consequat sed,
-          iaculis in justo. Maecenas tellus tellus, venenatis eget lobortis et,
-          venenatis id justo. Pellentesque habitant morbi tristique senectus et
-          netus et malesuada fames ac turpis egestas. Curabitur pharetra urna id
-          ligula aliquet eleifend. Curabitur ac ultricies magna, eget accumsan
-          nisi. Quisque feugiat blandit felis nec fringilla. Curabitur
-          ullamcorper sagittis felis, eget porttitor mi rhoncus in. Aenean et
-          sapien eu quam sollicitudin tempus vitae vitae diam. In sed pretium
-          est. Ut a urna sit amet turpis gravida porttitor id non augue.
-          Praesent molestie pharetra sodales. Sed semper hendrerit nulla. Cras
-          rutrum velit non est interdum, mollis aliquet diam imperdiet.
-          Suspendisse potenti. Donec nisi tortor, lacinia vitae viverra in,
-          pulvinar non tellus. Praesent nibh ante, pellentesque in condimentum
-          mollis, hendrerit at leo. Nullam eget nibh dapibus, congue libero id,
-          interdum erat. Sed mollis justo nec lacus cursus pulvinar. Phasellus
-          nec ligula euismod, dapibus dolor eu, mollis libero. Cras a diam enim.
-          Proin posuere aliquet tincidunt. Donec est ipsum, elementum porttitor
-          urna ut, dapibus posuere nisi. Quisque convallis sem vel facilisis
-          eleifend. Donec quis velit eu dolor egestas mattis. Fusce eget tellus
-          rutrum, malesuada erat semper, sodales justo. Quisque quam risus,
-          fringilla ut tristique non, varius ac orci. Duis vitae condimentum mi.
-          Nunc in diam vel enim hendrerit maximus non vitae lorem. Donec
-          consequat erat eu libero rutrum varius. In pulvinar pretium nisl, vel
-          dapibus quam scelerisque eget. Ut eget nulla vel magna cursus
-          ultricies. Vivamus lectus elit, congue quis placerat non, iaculis a
-          est. Nullam quis dapibus orci, at pellentesque sapien. Suspendisse
-          lacus tellus, mattis eget interdum eget, fermentum non augue.
-          Curabitur sit amet molestie dui. Aliquam ultrices lectus mauris. Duis
-          felis libero, ornare ut ornare non, vulputate id mi. Duis non lacus
-          nulla. Donec semper dolor non mi rutrum, at tempor massa auctor.
-          Vestibulum eleifend eu neque a ornare. Fusce vehicula urna elit, non
-          hendrerit odio convallis at. Etiam ac vulputate nulla. Vestibulum
-          tristique nulla at leo fermentum faucibus. Donec luctus congue justo
-          nec porta. Pellentesque nisl eros, hendrerit sit amet euismod non,
-          bibendum in mauris. Duis fringilla at purus a congue. Vestibulum
-          interdum elit tortor, in consectetur risus facilisis non. Morbi
-          vulputate, est ut pharetra molestie, est lectus dapibus lectus, quis
-          interdum enim turpis et mi. Vivamus vel metus sit amet quam auctor
-          vestibulum eget quis arcu. Suspendisse ut lacus vel quam auctor
-          egestas. Donec quis euismod arcu. Vestibulum non mollis velit, a
-          auctor tellus. In eleifend ipsum eu sem sodales interdum. Suspendisse
-          facilisis euismod nisi. Phasellus facilisis eros et eros commodo, vel
-          volutpat est feugiat. Etiam condimentum, risus a finibus sodales,
-          lacus ipsum maximus arcu, sed aliquet ipsum metus quis nibh.
-          Pellentesque dictum ac dolor non sollicitudin. Proin ut nulla cursus,
-          vulputate quam vitae, feugiat enim. Pellentesque eget nulla quam.
-        </Text>
-      </ScrollView>
-      <View style={styles.footer}>
-        <TouchableOpacity
-          style={styles.roundButton}
-          onPress={_ => setVisible(_ => true)}
+    <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+      <View style={styles.container}>
+        <Surface
+          style={{
+            top: visible ? 0 : -400,
+            backgroundColor: "#fff",
+            elevation: 4,
+            height: 400,
+            width: "100%",
+            padding: 16,
+            position: "absolute"
+          }}
         >
-          <Text style={styles.btnText}>+</Text>
-        </TouchableOpacity>
-      </View>
-      {visible && (
-        <Overlay
-          isVisible={visible}
-          height={300}
-          onBackdropPress={e => setVisible(false)}
-        >
-          <View>
-            <Text style={styles.modalTitle}>Utwórz post</Text>
-            <Input
-              multiline={true}
-              placeholder="Wprowadź treść"
-              inputStyle={{ height: 120 }}
+          <View style={{ flex: 1 }}>
+            <TextInput
+              mode="outlined"
+              style={[styles.inputContainerStyle, styles.textArea]}
+              multiline
+              label="Utwórz nowy wpis"
+              placeholder="Treść wpisu"
+              value={newPost}
+              onChangeText={newPost => setNewPost(newPost)}
+              onBlur={() => setVisible(_ => false)}
+              ref={ref}
             />
-            <View style={styles.space} />
-            <View style={styles.btnRow}>
-              <Button
-                title="Dodaj post"
-                onPress={_ => setVisible(false)}
-              ></Button>
+          </View>
+          <View style={styles.btnRow}>
+            <View>
+              <FAB
+                small
+                icon="send"
+                disabled={newPost.length === 0}
+                label="Dodaj post"
+                onPress={() => {
+                  setVisible(_ => false);
+                  ref.current && ref.current.blur();
+                  console.log(ref);
+                }}
+              ></FAB>
             </View>
           </View>
-        </Overlay>
-      )}
-    </View>
+        </Surface>
+
+        <ScrollView
+          style={{
+            height: Layout.height,
+            top: visible ? 400 : 0,
+            position: "absolute"
+          }}
+        >
+          <Text>
+            Dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
+            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
+            quis efficitur lectus augue id ante. Praesent venenatis varius
+            placerat
+          </Text>
+
+          <Text>
+            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
+            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
+            quis efficitur lectus augue id ante. Praesent venenatis varius
+            placerat
+          </Text>
+
+          <Text>
+            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
+            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
+            quis efficitur lectus augue id ante. Praesent venenatis varius
+            placerat
+          </Text>
+
+          <Text>
+            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
+            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
+            quis efficitur lectus augue id ante. Praesent venenatis varius
+            placerat
+          </Text>
+
+          <Text>
+            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
+            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
+            quis efficitur lectus augue id ante. Praesent venenatis varius
+            placerat
+          </Text>
+
+          <Text>
+            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
+            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
+            quis efficitur lectus augue id ante. Praesent venenatis varius
+            placerat
+          </Text>
+
+          <Text>
+            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
+            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
+            quis efficitur lectus augue id ante. Praesent venenatis varius
+            placerat
+          </Text>
+
+          <Text>
+            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
+            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
+            quis efficitur lectus augue id ante. Praesent venenatis varius
+            placerat
+          </Text>
+
+          <Text>
+            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
+            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
+            quis efficitur lectus augue id ante. Praesent venenatis varius
+            placerat
+          </Text>
+
+          <Text>
+            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
+            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
+            quis efficitur lectus augue id ante. Praesent venenatis varius
+            placerat
+          </Text>
+
+          <Text>
+            dolor sit amet, consectetur adipiscing elit. Vestibulum semper,
+            lectus sit amet scelerisque euismod, tortor libero luctus turpis,
+            quis efficitur lectus augue id ante. Praesent venenatis varius
+            placerat
+          </Text>
+        </ScrollView>
+        {/* 
+      <Dialog onDismiss={() => setVisible(_ => false)} visible={visible}>
+        <Dialog.Title>Nowy post</Dialog.Title>
+     
+      </Dialog> */}
+
+        <FAB
+          style={styles.fab}
+          icon={visible ? "close" : "plus"}
+          onPress={() => setVisible(_ => !visible)}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
-MainScreen.navigationOptions = {
-  header: null
-};
+MainScreen.navigationOptions = {};
 
 const styles = StyleSheet.create({
+  fab: {
+    position: "absolute",
+    marginHorizontal: 16,
+    right: 0,
+    bottom: 24
+  },
+  inputContainerStyle: {
+    backgroundColor: "#fff",
+    paddingHorizontal: 0
+  },
+  textArea: {
+    borderColor: "#ddd"
+  },
   btnRow: {
-    paddingHorizontal: 20,
-    margin: 20
+    margin: 16,
+    justifyContent: "center",
+    alignItems: "center",
+    bottom: 0
   },
-  modalTitle: {
-    fontSize: 24,
-    padding: 16
-  },
-  modal: {},
-  inputWrap: {
-    flex: 1
-  },
-  main: {
-    height: Layout.height
-  },
+
   container: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-
+    // flexDirection: "column",
+    // alignItems: "center",
+    // justifyContent: "center",
+    position: "relative",
     flex: 1
-  },
-
-  space: {
-    height: 20
-  },
-
-  bar: {
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-    backgroundColor: "#fff"
-  },
-
-  barTitle: {
-    fontSize: 24
-  },
-
-  roundButton: {
-    width: 64,
-    height: 64,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgb(65,135,220)",
-    borderRadius: 9999
-  },
-  btnText: {
-    fontSize: 36,
-    color: "white"
-  },
-  footer: {
-    paddingHorizontal: 20,
-    height: 96,
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center"
   }
 });

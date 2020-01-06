@@ -7,7 +7,6 @@ import * as yup from "yup";
 import logo from "../assets/images/icon.png";
 
 import { Button } from "react-native-elements";
-import { useNavigation } from "react-navigation-hooks";
 import { FormItem, Input } from "../components";
 
 const schema = yup.object({
@@ -24,8 +23,6 @@ const initialValues = {
 };
 
 export default function LoginScreen() {
-  const { navigate } = useNavigation();
-
   return (
     <Formik
       validationSchema={schema}
@@ -79,7 +76,8 @@ export default function LoginScreen() {
               <Text style={{ textAlign: "center" }}>
                 Nie masz jeszcze konta?{" "}
               </Text>
-              <TouchableOpacity onPress={() => navigate("Register")}>
+              {/* <TouchableOpacity onPress={() => navigate("Register")}> */}
+              <TouchableOpacity onPress={console.log}>
                 <Text style={{ textAlign: "center", fontWeight: "bold" }}>
                   Zarejestruj się
                 </Text>

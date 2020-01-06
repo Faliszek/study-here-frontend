@@ -5,11 +5,42 @@ import React, { useState } from "react";
 import { Platform, StatusBar, StyleSheet, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import AppNavigator from "./navigation/AppNavigator";
+// import AppNavigator from "./navigation/AppNavigator";
+
+import MainScreen from "./screens/MainScreen";
+import SettingsScreen from "./screens/SettingsScreen";
+
 import LoginScreen from "./screens/LoginScreen";
+import RegisterScreen from "./screens/RegisterScreen";
+
+// import { BottomNavigation } from "react-native-paper";
+
+import { createStackNavigator } from "@react-navigation/stack";
+
+import {
+  Appbar,
+  BottomNavigation,
+  DefaultTheme,
+  Theme,
+  Provider as PaperProvider
+} from "react-native-paper";
+
+const Stack = createStackNavigator();
+
+const routes = [
+  { key: "main", title: "Feed", icon: "newspaper" },
+  { key: "settings", title: "Ustawienia", icon: "settings" }
+];
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
+  const [routeIndex, setRouteIndex] = useState(0);
+  const [theme, setTheme] = React.useState<Theme>(DefaultTheme);
+
+  const renderScene = BottomNavigation.SceneMap({
+    main: MainScreen,
+    settings: SettingsScreen
+  });
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
@@ -21,11 +52,21 @@ export default function App(props) {
     );
   } else {
     return (
-      <View style={styles.container}>
-        {Platform.OS === "ios" && <StatusBar barStyle="default" />}
-        <AppNavigator />
-        {/* <LoginScreen /> */}
-      </View>
+      <PaperProvider theme={theme}>
+        <View style={styles.container}>
+          {/* {Platform.OS === "ios" && <StatusBar barStyle="default" />} */}
+          <Appbar.Header>
+            <Appbar.Content title="Title" />
+            <Appbar.Action icon="dots-vertical" onPress={console.log} />
+          </Appbar.Header>
+
+          <BottomNavigation
+            navigationState={{ index: routeIndex, routes }}
+            onIndexChange={routeIndex => setRouteIndex(routeIndex)}
+            renderScene={renderScene}
+          />
+        </View>
+      </PaperProvider>
     );
   }
 }

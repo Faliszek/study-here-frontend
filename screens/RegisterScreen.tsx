@@ -13,7 +13,6 @@ import {
 import logo from "../assets/images/icon.png";
 
 import { Button } from "react-native-elements";
-import { useNavigation } from "react-navigation-hooks";
 
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -41,8 +40,6 @@ const initialValues = {
 };
 
 export default function RegisterScreen() {
-  const { navigate } = useNavigation();
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image source={logo} style={styles.logo} />
@@ -123,7 +120,8 @@ export default function RegisterScreen() {
       <View style={{ height: 40 }} />
       <View>
         <Text style={{ textAlign: "center" }}>Masz juz konto? </Text>
-        <TouchableOpacity onPress={() => navigate("Login")}>
+        {/* <TouchableOpacity onPress={() => navigate("Login")}> */}
+        <TouchableOpacity onPress={console.log}>
           <Text style={{ textAlign: "center", fontWeight: "bold" }}>
             Zaloguj się
           </Text>

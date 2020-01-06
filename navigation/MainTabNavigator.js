@@ -8,7 +8,6 @@ import {
 // import TabBarIcon from "../components/TabBarIcon.ts";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
-import LinksScreen from "../screens/LinksScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import MainScreen from "../screens/MainScreen";
 
@@ -42,38 +41,29 @@ AuthStack.navigationOptions = ({ navigation }) => {
   };
 };
 
-AuthStack.path = "/auth";
+AuthStack.path = "auth";
 
 const HomeStack = createStackNavigator(
   {
-    Main: MainScreen,
-    Links: LinksScreen
+    Main: MainScreen
   },
   config
 );
 
-HomeStack.navigationOptions = ({ navigation }) => {
-  let tabBarVisible;
-  if (navigation.state.routes.length >= 1) {
-    navigation.state.routes.map(route => {
-      if (route.routeName === "Main") {
-        tabBarVisible = false;
-      } else {
-        tabBarVisible = true;
-      }
-    });
-  }
-
-  return {
-    tabBarVisible
-  };
-};
-
 HomeStack.path = "";
+
+const SettingsStack = createStackNavigator(
+  {
+    Settings: SettingsScreen
+  },
+  config
+);
+
+SettingsStack.path = "settings";
 
 const tabNavigator = createBottomTabNavigator({
   HomeStack,
-  AuthStack
+  SettingsStack
 });
 
 tabNavigator.path = "";
