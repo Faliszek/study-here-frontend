@@ -13,14 +13,19 @@ import { Button, TextInput } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import firebase from "react-native-firebase";
+
+const upKrakowEmailRegexp = /[a-z]+.[a-z]+[@]student\.up\.krakow\.pl/g;
 
 const schema = yup.object({
-  name: yup.string().required("Imię i nazwisko jest wymagane"),
-  studentNumber: yup.string().required("Numer albumu jest wymagany"),
   email: yup
     .string()
     .required("Email jest wymagany")
-    .email("Podany e-mail jest niepoprawny"),
+    .email("Podany e-mail jest niepoprawny")
+    .matches(upKrakowEmailRegexp, {
+      excludeEmptyString: true,
+      message: "Email powinnien mieć formę xxx.yyy@up.krakow.pl"
+    }),
   password: yup
     .string()
     .required("Hasło jest wymagane")
@@ -28,21 +33,21 @@ const schema = yup.object({
 });
 
 const initialValues = {
-  name: "",
-  studentNumber: "",
   email: "",
   password: ""
 };
 
 export default function RegisterScreen() {
   const nav = useNavigation();
+  const signUp = firebase.auth().createUserWithEmailAndPassword;
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image source={logo} style={styles.logo} />
       <View style={{ height: 40 }} />
       <Text style={{ fontSize: 32, marginBottom: 24 }}>Zarejestruj się</Text>
       <Formik
-        onSubmit={values => console.log(values)}
+        onSubmit={values => signUp(values.email, values.password)}
         validationSchema={schema}
         initialValues={initialValues}
         validateOnChange
@@ -50,33 +55,6 @@ export default function RegisterScreen() {
         {({ handleChange, handleBlur, values, errors, touched }) => {
           return (
             <>
-              <FormItem error={errors.name} touched={touched.name}>
-                {({ hasError }) => (
-                  <TextInput
-                    value={values.name}
-                    error={hasError}
-                    onChangeText={handleChange("name")}
-                    label={"Imię i nazwisko"}
-                    placeholder={"Imię i nazwisko"}
-                    onBlur={handleBlur("name")}
-                  />
-                )}
-              </FormItem>
-              <FormItem
-                error={errors.studentNumber}
-                touched={touched.studentNumber}
-              >
-                {({ hasError }) => (
-                  <TextInput
-                    value={values.studentNumber}
-                    error={hasError}
-                    onChangeText={handleChange("studentNumber")}
-                    label={"Numer albumu"}
-                    placeholder={"Numer albumu"}
-                    onBlur={handleBlur("studentNumber")}
-                  />
-                )}
-              </FormItem>
               <FormItem error={errors.email} touched={touched.email}>
                 {({ hasError }) => (
                   <TextInput

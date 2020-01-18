@@ -13,6 +13,8 @@ import { Button, TextInput, Text, Caption, Title } from "react-native-paper";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import { useNavigation } from "@react-navigation/native";
+import firebase from "react-native-firebase";
+
 const schema = yup.object({
   email: yup
     .string()
@@ -26,13 +28,15 @@ const initialValues = {
   password: ""
 };
 
-export default function LoginScreen() {
+export default function LoginScreen(props) {
   const nav = useNavigation();
+  const signIn = firebase.auth().signInWithEmailAndPassword;
+
   return (
     <Formik
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={values => console.log(values)}
+      onSubmit={values => signIn(values.email, values.password)}
       validateOnChange
     >
       {({ handleChange, handleBlur, values, errors, touched }) => {
@@ -80,7 +84,7 @@ export default function LoginScreen() {
               <Caption style={{ textAlign: "center" }}>
                 Nie masz jeszcze konta?{" "}
               </Caption>
-              <Button onPress={() => nav.navigate("Register")}>
+              <Button onPress={() => nav.navigate("RegisterInfo")}>
                 <Text style={{ textAlign: "center" }}>Zarejestruj się</Text>
               </Button>
             </View>
