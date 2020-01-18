@@ -5,17 +5,19 @@ import { Image, StyleSheet, Text, View, ScrollView } from "react-native";
 //eslint-disable-next-line
 import logo from "../assets/images/icon.png";
 
-import { Formik } from "formik";
+import { Formik, Form } from "formik";
 import * as yup from "yup";
 
 import { FormItem } from "./components/FormItem";
-import { Button, TextInput } from "react-native-paper";
+import { Button, TextInput, Snackbar } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import firebase from "react-native-firebase";
+import { useFirebase } from "../App";
 
-const upKrakowEmailRegexp = /[a-z]+.[a-z]+[@]student\.up\.krakow\.pl/g;
+import { useAuth } from "./AuthProvider";
+
+const upKrakowEmailRegexp = /^[a-z]+.[a-z]+[@]student\.up\.krakow\.pl+$/;
 
 const schema = yup.object({
   email: yup
@@ -23,8 +25,7 @@ const schema = yup.object({
     .required("Email jest wymagany")
     .email("Podany e-mail jest niepoprawny")
     .matches(upKrakowEmailRegexp, {
-      excludeEmptyString: true,
-      message: "Email powinnien mieć formę xxx.yyy@up.krakow.pl"
+      message: "Email powinnien mieć formę xxx.yyy@student.up.krakow.pl"
     }),
   password: yup
     .string()
@@ -39,7 +40,12 @@ const initialValues = {
 
 export default function RegisterScreen() {
   const nav = useNavigation();
-  const signUp = firebase.auth().createUserWithEmailAndPassword;
+  const firebase = useFirebase();
+
+  const [visible, setVisible] = React.useState(false);
+  const [message, setMessage] = React.useState("");
+
+  const { setAuth } = useAuth();
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -47,12 +53,56 @@ export default function RegisterScreen() {
       <View style={{ height: 40 }} />
       <Text style={{ fontSize: 32, marginBottom: 24 }}>Zarejestruj się</Text>
       <Formik
-        onSubmit={values => signUp(values.email, values.password)}
+        onSubmit={(values, actions) => {
+          return firebase
+            .auth()
+            .createUserWithEmailAndPassword(values.email, values.password)
+            .then(() => {
+              setVisible(true);
+              setMessage(
+                "Pomyślnie utworzono konto, za chwilkę zostaniesz zalogowany!"
+              );
+              return firebase
+                .auth()
+                .signInWithEmailAndPassword(values.email, values.password)
+                .then(res => {
+                  return res.user.getIdToken().then(token => {
+                    setMessage("Pomyślnie zalogowano");
+                    setAuth({
+                      uid: res.user.uid,
+                      email: res.user.email,
+                      token
+                    });
+                  });
+                })
+                .catch(() => {
+                  setMessage(
+                    "Nie udało się zalogować, spróbój ponownie poźniej"
+                  );
+                });
+            })
+            .catch(() => {
+              setVisible(true);
+              setMessage("Nie udało się utworzyć konta, spróboj ponownie");
+            })
+            .finally(() => {
+              actions.setSubmitting(false);
+            });
+        }}
         validationSchema={schema}
         initialValues={initialValues}
         validateOnChange
       >
-        {({ handleChange, handleBlur, values, errors, touched }) => {
+        {({
+          handleChange,
+          handleBlur,
+          values,
+          errors,
+          touched,
+          handleSubmit,
+          isSubmitting,
+          setFieldValue
+        }) => {
           return (
             <>
               <FormItem error={errors.email} touched={touched.email}>
@@ -60,10 +110,17 @@ export default function RegisterScreen() {
                   <TextInput
                     value={values.email}
                     error={hasError}
-                    onChangeText={handleChange("email")}
+                    onChangeText={v => {
+                      const newValue = v.trim();
+                      setFieldValue("email", newValue);
+                    }}
                     label={"Email"}
                     placeholder={"Email"}
-                    onBlur={handleBlur("email")}
+                    onBlur={() => {
+                      handleBlur("email");
+                      setFieldValue("email", values.email.trim().toLowerCase());
+                    }}
+                    autoCompleteType={"email"}
                   />
                 )}
               </FormItem>
@@ -81,7 +138,13 @@ export default function RegisterScreen() {
                 )}
               </FormItem>
               <View style={{ height: 40 }} />
-              <Button mode="contained">Zarejestruj się</Button>
+              <Button
+                mode="contained"
+                onPress={handleSubmit}
+                loading={isSubmitting}
+              >
+                Zarejestruj się
+              </Button>
             </>
           );
         }}
@@ -92,6 +155,9 @@ export default function RegisterScreen() {
         <Text style={{ textAlign: "center" }}>Masz już konto? </Text>
         <Button onPress={() => nav.navigate("Login")}>Zaloguj się</Button>
       </View>
+      <Snackbar visible={visible} onDismiss={() => setVisible(false)}>
+        {message}
+      </Snackbar>
     </ScrollView>
   );
 }

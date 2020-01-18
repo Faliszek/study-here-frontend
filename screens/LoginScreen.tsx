@@ -1,5 +1,5 @@
 import React from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 
 import { Formik } from "formik";
 import * as yup from "yup";
@@ -8,12 +8,22 @@ import logo from "../assets/images/icon.png";
 
 import { FormItem } from "./components/FormItem";
 
-import { Button, TextInput, Text, Caption, Title } from "react-native-paper";
+import {
+  Button,
+  TextInput,
+  Text,
+  Caption,
+  Title,
+  Snackbar
+} from "react-native-paper";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 import { useNavigation } from "@react-navigation/native";
-import firebase from "react-native-firebase";
+import { useFirebase } from "../App";
+import { useAuth } from "./AuthProvider";
+// import * as firebase from "firebase/app";
+// import "firebase/auth";
 
 const schema = yup.object({
   email: yup
@@ -24,22 +34,55 @@ const schema = yup.object({
 });
 
 const initialValues = {
-  email: "",
-  password: ""
+  email: "pawel.falisz@student.up.krakow.pl",
+  password: "alamakota"
 };
 
-export default function LoginScreen(props) {
+export default function LoginScreen() {
   const nav = useNavigation();
-  const signIn = firebase.auth().signInWithEmailAndPassword;
+  const firebase = useFirebase();
+
+  const [visible, setVisible] = React.useState(false);
+  const [message, setMessage] = React.useState("");
+
+  const { setAuth } = useAuth();
 
   return (
     <Formik
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={values => signIn(values.email, values.password)}
+      onSubmit={(values, actions) =>
+        firebase
+          .auth()
+          .signInWithEmailAndPassword(values.email, values.password)
+          .then(res => {
+            return res.user.getIdToken().then(token => {
+              setMessage("Pomyślnie zalogowano");
+              setVisible(true);
+              setAuth({
+                uid: res.user.uid,
+                email: res.user.email,
+                token
+              });
+            });
+          })
+          .catch(() => {
+            setMessage("Nie udało się zalogować, spróbój ponownie poźniej");
+            setAuth({});
+          })
+      }
       validateOnChange
     >
-      {({ handleChange, handleBlur, values, errors, touched }) => {
+      {({
+        handleChange,
+        handleBlur,
+        values,
+        errors,
+        touched,
+        setFieldValue,
+        handleSubmit,
+        isSubmitting
+      }) => {
         return (
           <KeyboardAwareScrollView
             contentContainerStyle={styles.container}
@@ -55,10 +98,16 @@ export default function LoginScreen(props) {
                 return (
                   <TextInput
                     value={values.email}
-                    onChangeText={handleChange("email")}
+                    onChangeText={v => {
+                      const newValue = v.trim();
+                      setFieldValue("email", newValue);
+                    }}
                     label={"Email"}
                     placeholder={"Email"}
-                    onBlur={handleBlur("email")}
+                    onBlur={() => {
+                      handleBlur("email");
+                      setFieldValue("email", values.email.trim().toLowerCase());
+                    }}
                     error={hasError}
                   />
                 );
@@ -78,7 +127,13 @@ export default function LoginScreen(props) {
               )}
             </FormItem>
             <View style={{ height: 40 }} />
-            <Button mode="contained">Zaloguj się</Button>
+            <Button
+              mode="contained"
+              onPress={handleSubmit}
+              loading={isSubmitting}
+            >
+              Zaloguj się
+            </Button>
             <View style={{ height: 40 }} />
             <View>
               <Caption style={{ textAlign: "center" }}>
@@ -88,6 +143,10 @@ export default function LoginScreen(props) {
                 <Text style={{ textAlign: "center" }}>Zarejestruj się</Text>
               </Button>
             </View>
+
+            <Snackbar visible={visible} onDismiss={() => setVisible(false)}>
+              {message}
+            </Snackbar>
           </KeyboardAwareScrollView>
         );
       }}

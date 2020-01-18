@@ -10,6 +10,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { FAB, TextInput, Surface } from "react-native-paper";
 
 import { Post } from "./components/Post";
+import { useAuth } from "./AuthProvider";
 
 const posts: Array<Post> = [
   {
@@ -46,6 +47,7 @@ export default function MainScreen() {
       ref.current.focus();
     }
   }, [visible]);
+
   return (
     <View style={styles.container}>
       <Surface

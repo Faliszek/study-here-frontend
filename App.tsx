@@ -2,7 +2,13 @@ import { AppLoading } from "expo";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import React, { useState } from "react";
-import { Platform, StatusBar, Text, StyleSheet, View } from "react-native";
+import {
+  Platform,
+  StyleSheet,
+  View,
+  AsyncStorage,
+  StatusBar
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 // import AppNavigator from "./navigation/AppNavigator";
@@ -21,13 +27,17 @@ import {
   BottomNavigation,
   DefaultTheme,
   Theme,
-  Provider as PaperProvider
+  Provider as PaperProvider,
+  Button,
+  Menu
 } from "react-native-paper";
 
 import { NavigationNativeContainer } from "@react-navigation/native";
 
 import { createStackNavigator } from "@react-navigation/stack";
-// import firebase from "react-native-firebase";
+import firebase from "firebase/app";
+import "firebase/auth";
+import { AuthProvider } from "./screens/AuthProvider";
 
 const Stack = createStackNavigator();
 
@@ -46,17 +56,37 @@ const firebaseConfig = {
   appId: "1:643441923641:web:e64ac007feac179d8e5fe8"
 };
 
-// firebase.initializeApp(firebaseConfig, "i-study-here");
+const f = firebase.initializeApp(firebaseConfig, "i-study-here");
+export function useFirebase() {
+  return f;
+}
+
+/* {Platform.OS === "ios" && <StatusBar barStyle="default" />} */
+
+const theme = {
+  ...DefaultTheme,
+  dark: true,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "#1E88E5",
+    accent: "#c62828"
+  }
+};
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
   const [routeIndex, setRouteIndex] = useState(0);
-  const [theme, setTheme] = React.useState<Theme>(DefaultTheme);
+
+  const [visible, setVisible] = React.useState(false);
 
   const renderScene = BottomNavigation.SceneMap({
     main: MainScreen,
     settings: SettingsScreen
   });
+
+  React.useEffect(() => {
+    console.log("App mounted", props);
+  }, []);
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
@@ -68,36 +98,66 @@ export default function App(props) {
     );
   } else {
     return (
-      <PaperProvider theme={theme}>
-        <View style={styles.container}>
-          {/* {Platform.OS === "ios" && <StatusBar barStyle="default" />} */}
+      <AuthProvider>
+        {({ auth, signOut }) => (
+          <PaperProvider theme={theme}>
+            <View style={styles.container}>
+              <StatusBar backgroundColor="black" barStyle="light-content" />
+              {auth.token ? (
+                <>
+                  <Appbar.Header>
+                    <Appbar.Content title="iStudyHere" />
 
-          {/*INSIDE STACK*/}
-          <Appbar.Header>
-            <Appbar.Content title="Title" />
-            <Appbar.Action icon="dots-vertical" onPress={console.log} />
-          </Appbar.Header>
+                    <Menu
+                      visible={visible}
+                      onDismiss={() => setVisible(false)}
+                      anchor={
+                        <Appbar.Action
+                          icon="dots-vertical"
+                          color="white"
+                          onPress={() => setVisible(true)}
+                        />
+                      }
+                    >
+                      <Menu.Item
+                        onPress={() => signOut()}
+                        title="Wyloguj się"
+                      />
+                    </Menu>
+                  </Appbar.Header>
 
-          <BottomNavigation
-            navigationState={{ index: routeIndex, routes }}
-            onIndexChange={routeIndex => setRouteIndex(routeIndex)}
-            renderScene={renderScene}
-          />
-
-          {/*AUTH STACK*/}
-
-          <NavigationNativeContainer>
-            <Stack.Navigator initialRouteName={"Login"}>
-              <Stack.Screen name="Login" component={LoginScreen} />
-              <Stack.Screen name="Register" component={RegisterScreen} />
-              <Stack.Screen
-                name="RegisterInfo"
-                component={RegisterInfoScreen}
-              />
-            </Stack.Navigator>
-          </NavigationNativeContainer>
-        </View>
-      </PaperProvider>
+                  <BottomNavigation
+                    navigationState={{ index: routeIndex, routes }}
+                    onIndexChange={routeIndex => setRouteIndex(routeIndex)}
+                    renderScene={renderScene}
+                  />
+                </>
+              ) : (
+                <NavigationNativeContainer>
+                  <Stack.Navigator initialRouteName={"Login"}>
+                    <Stack.Screen name="Login" component={LoginScreen} />
+                    <Stack.Screen name="Register" component={RegisterScreen} />
+                    <Stack.Screen
+                      name="RegisterInfo"
+                      component={RegisterInfoScreen}
+                    />
+                  </Stack.Navigator>
+                </NavigationNativeContainer>
+              )}
+              <Button
+                mode="contained"
+                onPress={() => {
+                  AsyncStorage.clear().then(() => console.log("CLEARED"));
+                  AsyncStorage.getAllKeys().then(console.log);
+                  signOut();
+                }}
+              >
+                Clear
+              </Button>
+            </View>
+          </PaperProvider>
+        )}
+      </AuthProvider>
     );
   }
 }
