@@ -69,7 +69,7 @@ const theme = {
   colors: {
     ...DefaultTheme.colors,
     primary: "#1E88E5",
-    accent: "#c62828"
+    accent: "#FFC107"
   }
 };
 
@@ -100,62 +100,62 @@ export default function App(props) {
     return (
       <AuthProvider>
         {({ auth, signOut }) => (
-          <PaperProvider theme={theme}>
-            <View style={styles.container}>
-              <StatusBar backgroundColor="black" barStyle="light-content" />
-              {auth.token ? (
-                <>
-                  <Appbar.Header>
-                    <Appbar.Content title="iStudyHere" />
+          <>
+            <StatusBar />
 
-                    <Menu
-                      visible={visible}
-                      onDismiss={() => setVisible(false)}
-                      anchor={
-                        <Appbar.Action
-                          icon="dots-vertical"
-                          color="white"
-                          onPress={() => setVisible(true)}
+            <PaperProvider theme={theme}>
+              <View style={styles.container}>
+                {auth.token ? (
+                  <>
+                    <Appbar.Header>
+                      <Appbar.Content title="iStudyHere" />
+
+                      <Menu
+                        visible={visible}
+                        onDismiss={() => setVisible(false)}
+                        anchor={
+                          <Appbar.Action
+                            icon="dots-vertical"
+                            color="white"
+                            onPress={() => setVisible(true)}
+                          />
+                        }
+                      >
+                        <Menu.Item
+                          onPress={() => signOut()}
+                          title="Wyloguj się"
                         />
-                      }
-                    >
-                      <Menu.Item
-                        onPress={() => signOut()}
-                        title="Wyloguj się"
-                      />
-                    </Menu>
-                  </Appbar.Header>
+                      </Menu>
+                    </Appbar.Header>
 
-                  <BottomNavigation
-                    navigationState={{ index: routeIndex, routes }}
-                    onIndexChange={routeIndex => setRouteIndex(routeIndex)}
-                    renderScene={renderScene}
-                  />
-                </>
-              ) : (
-                <NavigationNativeContainer>
-                  <Stack.Navigator initialRouteName={"Login"}>
-                    <Stack.Screen name="Login" component={LoginScreen} />
-                    <Stack.Screen name="Register" component={RegisterScreen} />
-                    <Stack.Screen
-                      name="RegisterInfo"
-                      component={RegisterInfoScreen}
+                    <BottomNavigation
+                      navigationState={{ index: routeIndex, routes }}
+                      onIndexChange={routeIndex => setRouteIndex(routeIndex)}
+                      renderScene={renderScene}
                     />
-                  </Stack.Navigator>
-                </NavigationNativeContainer>
-              )}
-              <Button
-                mode="contained"
-                onPress={() => {
-                  AsyncStorage.clear().then(() => console.log("CLEARED"));
-                  AsyncStorage.getAllKeys().then(console.log);
-                  signOut();
-                }}
-              >
-                Clear
-              </Button>
-            </View>
-          </PaperProvider>
+                  </>
+                ) : (
+                  <NavigationNativeContainer>
+                    <Stack.Navigator
+                      initialRouteName={"Login"}
+                      headerMode="none"
+                      mode="card"
+                    >
+                      <Stack.Screen name="Login" component={LoginScreen} />
+                      <Stack.Screen
+                        name="Register"
+                        component={RegisterScreen}
+                      />
+                      <Stack.Screen
+                        name="RegisterInfo"
+                        component={RegisterInfoScreen}
+                      />
+                    </Stack.Navigator>
+                  </NavigationNativeContainer>
+                )}
+              </View>
+            </PaperProvider>
+          </>
         )}
       </AuthProvider>
     );

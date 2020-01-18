@@ -1,15 +1,11 @@
-import * as WebBrowser from "expo-web-browser";
 import React from "react";
-import { Image, StyleSheet, Text, View, ScrollView } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
-//eslint-disable-next-line
-import logo from "../assets/images/icon.png";
-
-import { Formik, Form } from "formik";
+import { Formik } from "formik";
 import * as yup from "yup";
 
 import { FormItem } from "./components/FormItem";
-import { Button, TextInput, Snackbar } from "react-native-paper";
+import { Title, Avatar, Button, TextInput, Snackbar } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -30,12 +26,18 @@ const schema = yup.object({
   password: yup
     .string()
     .required("Hasło jest wymagane")
-    .min(6, "Hasło powinno zawierać conajmniej 6 znaków")
+    .min(6, "Hasło powinno zawierać conajmniej 6 znaków"),
+  repeatPassword: yup
+    .string()
+    .test("password", "Hasła muszą być takie same!", function(value) {
+      return this.parent.password === value;
+    })
 });
 
 const initialValues = {
   email: "",
-  password: ""
+  password: "",
+  repeatPassword: ""
 };
 
 export default function RegisterScreen() {
@@ -48,126 +50,134 @@ export default function RegisterScreen() {
   const { setAuth } = useAuth();
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Image source={logo} style={styles.logo} />
-      <View style={{ height: 40 }} />
-      <Text style={{ fontSize: 32, marginBottom: 24 }}>Zarejestruj się</Text>
-      <Formik
-        onSubmit={(values, actions) => {
-          return firebase
-            .auth()
-            .createUserWithEmailAndPassword(values.email, values.password)
-            .then(() => {
-              setVisible(true);
-              setMessage(
-                "Pomyślnie utworzono konto, za chwilkę zostaniesz zalogowany!"
-              );
-              return firebase
-                .auth()
-                .signInWithEmailAndPassword(values.email, values.password)
-                .then(res => {
-                  return res.user.getIdToken().then(token => {
-                    setMessage("Pomyślnie zalogowano");
-                    setAuth({
-                      uid: res.user.uid,
-                      email: res.user.email,
-                      token
-                    });
+    <Formik
+      onSubmit={(values, actions) => {
+        return firebase
+          .auth()
+          .createUserWithEmailAndPassword(values.email, values.password)
+          .then(() => {
+            setVisible(true);
+            setMessage(
+              "Pomyślnie utworzono konto, za chwilkę zostaniesz zalogowany!"
+            );
+            return firebase
+              .auth()
+              .signInWithEmailAndPassword(values.email, values.password)
+              .then(res => {
+                return res.user.getIdToken().then(token => {
+                  setMessage("Pomyślnie zalogowano");
+                  setAuth({
+                    uid: res.user.uid,
+                    email: res.user.email,
+                    token
                   });
-                })
-                .catch(() => {
-                  setMessage(
-                    "Nie udało się zalogować, spróbój ponownie poźniej"
-                  );
                 });
-            })
-            .catch(() => {
-              setVisible(true);
-              setMessage("Nie udało się utworzyć konta, spróboj ponownie");
-            })
-            .finally(() => {
-              actions.setSubmitting(false);
-            });
-        }}
-        validationSchema={schema}
-        initialValues={initialValues}
-        validateOnChange
-      >
-        {({
-          handleChange,
-          handleBlur,
-          values,
-          errors,
-          touched,
-          handleSubmit,
-          isSubmitting,
-          setFieldValue
-        }) => {
-          return (
-            <>
-              <FormItem error={errors.email} touched={touched.email}>
-                {({ hasError }) => (
-                  <TextInput
-                    value={values.email}
-                    error={hasError}
-                    onChangeText={v => {
-                      const newValue = v.trim();
-                      setFieldValue("email", newValue);
-                    }}
-                    label={"Email"}
-                    placeholder={"Email"}
-                    onBlur={() => {
-                      handleBlur("email");
-                      setFieldValue("email", values.email.trim().toLowerCase());
-                    }}
-                    autoCompleteType={"email"}
-                  />
-                )}
-              </FormItem>
-              <FormItem error={errors.password} touched={touched.password}>
-                {({ hasError }) => (
-                  <TextInput
-                    value={values.password}
-                    onChangeText={handleChange("password")}
-                    error={hasError}
-                    label={"Hasło"}
-                    placeholder={"Hasło"}
-                    onBlur={handleBlur("password")}
-                    secureTextEntry={true}
-                  />
-                )}
-              </FormItem>
-              <View style={{ height: 40 }} />
-              <Button
-                mode="contained"
-                onPress={handleSubmit}
-                loading={isSubmitting}
-              >
-                Zarejestruj się
-              </Button>
-            </>
-          );
-        }}
-      </Formik>
-
-      <View style={{ height: 40 }} />
-      <View>
-        <Text style={{ textAlign: "center" }}>Masz już konto? </Text>
-        <Button onPress={() => nav.navigate("Login")}>Zaloguj się</Button>
-      </View>
-      <Snackbar visible={visible} onDismiss={() => setVisible(false)}>
-        {message}
-      </Snackbar>
-    </ScrollView>
+              })
+              .catch(() => {
+                setMessage("Nie udało się zalogować, spróbój ponownie poźniej");
+              });
+          })
+          .catch(() => {
+            setVisible(true);
+            setMessage("Nie udało się utworzyć konta, spróboj ponownie");
+          })
+          .finally(() => {
+            actions.setSubmitting(false);
+          });
+      }}
+      validationSchema={schema}
+      initialValues={initialValues}
+      validateOnChange
+    >
+      {({
+        handleChange,
+        handleBlur,
+        values,
+        errors,
+        touched,
+        handleSubmit,
+        isSubmitting,
+        setFieldValue
+      }) => {
+        return (
+          <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+            <Avatar.Icon icon="account-check" size={128} />
+            <View style={{ height: 40 }} />
+            <Title style={{ marginBottom: 32 }}>Zarejestruj się</Title>
+            <FormItem error={errors.email} touched={touched.email}>
+              {({ hasError }) => (
+                <TextInput
+                  value={values.email}
+                  error={hasError}
+                  onChangeText={v => {
+                    const newValue = v.trim();
+                    setFieldValue("email", newValue);
+                  }}
+                  label={"Email"}
+                  placeholder={"Email"}
+                  onBlur={() => {
+                    handleBlur("email");
+                    setFieldValue("email", values.email.trim().toLowerCase());
+                  }}
+                  autoCompleteType={"email"}
+                />
+              )}
+            </FormItem>
+            <FormItem error={errors.password} touched={touched.password}>
+              {({ hasError }) => (
+                <TextInput
+                  value={values.password}
+                  onChangeText={handleChange("password")}
+                  error={hasError}
+                  label={"Hasło"}
+                  placeholder={"Hasło"}
+                  onBlur={handleBlur("password")}
+                  secureTextEntry={true}
+                />
+              )}
+            </FormItem>
+            <FormItem
+              error={errors.repeatPassword}
+              touched={touched.repeatPassword}
+            >
+              {({ hasError }) => (
+                <TextInput
+                  value={values.repeatPassword}
+                  onChangeText={handleChange("repeatPassword")}
+                  error={hasError}
+                  label={"Powtórz hasło"}
+                  placeholder={"Powtórz hasło"}
+                  onBlur={handleBlur("repeatPassword")}
+                  secureTextEntry={true}
+                />
+              )}
+            </FormItem>
+            <View style={{ height: 40 }} />
+            <Button
+              mode="contained"
+              onPress={handleSubmit}
+              loading={isSubmitting}
+            >
+              Zarejestruj się
+            </Button>
+            <View style={{ height: 40 }} />
+            <View>
+              <Text style={{ textAlign: "center" }}>Masz już konto? </Text>
+              <Button onPress={() => nav.navigate("Login")}>Zaloguj się</Button>
+            </View>
+            <Snackbar visible={visible} onDismiss={() => setVisible(false)}>
+              {message}
+            </Snackbar>
+          </KeyboardAwareScrollView>
+        );
+      }}
+    </Formik>
   );
 }
 
-RegisterScreen.navigationOptions = {
-  header: null
-};
-
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
@@ -183,9 +193,5 @@ const styles = StyleSheet.create({
     width: 50,
     alignItems: "center",
     justifyContent: "center"
-  },
-  logo: {
-    width: 128,
-    height: 128
   }
 });

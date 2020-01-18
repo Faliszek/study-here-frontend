@@ -7,7 +7,7 @@ import {
 } from "react-native";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { FAB, TextInput, Surface } from "react-native-paper";
+import { Button, FAB, TextInput, Surface } from "react-native-paper";
 
 import { Post } from "./components/Post";
 import { useAuth } from "./AuthProvider";
@@ -70,29 +70,26 @@ export default function MainScreen() {
               mode="outlined"
               style={[styles.inputContainerStyle, styles.textArea]}
               multiline
-              label="Utwórz nowy wpis"
               placeholder="Treść wpisu"
               value={newPost}
               onChangeText={newPost => setNewPost(newPost)}
               onBlur={() => setVisible(_ => false)}
               ref={ref}
+              numberOfLines={4}
             />
           </KeyboardAwareScrollView>
         </View>
-        <View style={styles.btnRow}>
-          <View>
-            <FAB
-              small
-              icon="send"
-              disabled={newPost.length === 0}
-              label="Dodaj post"
-              onPress={() => {
-                setVisible(_ => false);
-                ref.current && ref.current.blur();
-              }}
-            ></FAB>
-          </View>
-        </View>
+        <Button
+          color={"white"}
+          icon="send"
+          disabled={newPost.length === 0}
+          onPress={() => {
+            setVisible(_ => false);
+            ref.current && ref.current.blur();
+          }}
+        >
+          Dodaj post
+        </Button>
       </Surface>
 
       <ScrollView
@@ -106,6 +103,7 @@ export default function MainScreen() {
       </ScrollView>
 
       <FAB
+        color={"white"}
         style={styles.fab}
         icon={visible ? "close" : "plus"}
         onPress={() => setVisible(_ => !visible)}

@@ -1,10 +1,8 @@
 import React from "react";
-import { Image, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 
 import { Formik } from "formik";
 import * as yup from "yup";
-
-import logo from "../assets/images/icon.png";
 
 import { FormItem } from "./components/FormItem";
 
@@ -14,7 +12,8 @@ import {
   Text,
   Caption,
   Title,
-  Snackbar
+  Snackbar,
+  Avatar
 } from "react-native-paper";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
@@ -88,11 +87,9 @@ export default function LoginScreen() {
             contentContainerStyle={styles.container}
             enableOnAndroid={true}
           >
-            <Image source={logo} style={styles.logo} />
+            <Avatar.Icon size={128} icon="account-heart" />
             <View style={{ height: 40 }} />
-            <Title style={{ fontSize: 32, marginBottom: 24 }}>
-              Zaloguj się!
-            </Title>
+            <Title style={{ marginBottom: 32 }}>Zaloguj się!</Title>
             <FormItem error={errors.email} touched={touched.email}>
               {({ hasError }) => {
                 return (
@@ -153,10 +150,6 @@ export default function LoginScreen() {
     </Formik>
   );
 }
-
-LoginScreen.navigationOptions = {
-  header: null
-};
 
 const styles = StyleSheet.create({
   container: {
