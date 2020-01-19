@@ -1,14 +1,12 @@
 import React from "react";
-
 import { View, StyleSheet } from "react-native";
-
 import { Button, TextInput, Snackbar } from "react-native-paper";
+
 import { useAuth } from "./AuthProvider";
 import { AuthorDetails } from "./components/Post";
 import { useFirebase } from "../App";
 
 import * as Post from "./post";
-// import { useAuth } from "./AuthProvider";
 
 export default function NewPost(props: {
   value: string;

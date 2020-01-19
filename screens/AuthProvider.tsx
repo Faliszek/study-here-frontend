@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { AsyncStorage } from "react-native";
-import { auth } from "firebase";
 
 type Auth = {
   uid: string | null;

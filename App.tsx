@@ -2,20 +2,13 @@ import { AppLoading } from "expo";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
 import React, { useState } from "react";
-import {
-  Platform,
-  StyleSheet,
-  View,
-  AsyncStorage,
-  StatusBar
-} from "react-native";
+import { Platform, StyleSheet, View, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 // import AppNavigator from "./navigation/AppNavigator";
 
 import MainScreen from "./screens/MainScreen";
 import SettingsScreen from "./screens/SettingsScreen";
-import NewPostScreen from "./screens/NewPostScreen";
 
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
@@ -25,11 +18,8 @@ import RegisterInfoScreen from "./screens/RegisterInfoScreen";
 
 import {
   Appbar,
-  BottomNavigation,
   DefaultTheme,
-  Theme,
   Provider as PaperProvider,
-  Button,
   Menu
 } from "react-native-paper";
 
@@ -44,13 +34,7 @@ import "firebase/database";
 import { AuthProvider } from "./screens/AuthProvider";
 
 const Stack = createStackNavigator();
-const NewPostStack = createStackNavigator();
 const MenuStack = createMaterialBottomTabNavigator();
-
-const routes = [
-  { key: "main", title: "Feed", icon: "newspaper" },
-  { key: "settings", title: "Ustawienia", icon: "settings" }
-];
 
 const firebaseConfig = {
   apiKey: "AIzaSyA5Yw093poLsBoAjQgZBUcvZaPdQ_giRAw",
@@ -81,15 +65,8 @@ const theme = {
 
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
-  const [routeIndex, setRouteIndex] = useState(0);
 
   const [visible, setVisible] = React.useState(false);
-
-  const renderScene = BottomNavigation.SceneMap({
-    main: MainScreen,
-    settings: SettingsScreen
-    // newPost: NewPost
-  });
 
   React.useEffect(() => {}, []);
 

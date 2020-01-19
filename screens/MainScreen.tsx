@@ -1,13 +1,7 @@
 import React from "react";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  KeyboardAvoidingView
-} from "react-native";
+import { StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native";
 
-import { FAB, ActivityIndicator, Snackbar, Colors } from "react-native-paper";
-import { useAuth } from "./AuthProvider";
+import { FAB, ActivityIndicator, Snackbar } from "react-native-paper";
 
 import { Post } from "./components/Post";
 import NewPostScreen from "./NewPostScreen";

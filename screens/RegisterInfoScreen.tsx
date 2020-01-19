@@ -1,9 +1,6 @@
 import React from "react";
-
 import { View } from "react-native";
-
 import { Avatar, Button, Title, Paragraph } from "react-native-paper";
-
 import { useNavigation } from "@react-navigation/native";
 
 export default function RegisterInfoScreen() {

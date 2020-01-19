@@ -48,7 +48,7 @@ export default function LoginScreen() {
     <Formik
       validationSchema={schema}
       initialValues={initialValues}
-      onSubmit={(values, actions) =>
+      onSubmit={values =>
         firebase
           .auth()
           .signInWithEmailAndPassword(values.email, values.password)

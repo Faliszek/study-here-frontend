@@ -1,16 +1,12 @@
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
-
 import { Formik } from "formik";
 import * as yup from "yup";
-
-import { FormItem } from "./components/FormItem";
 import { Title, Avatar, Button, TextInput, Snackbar } from "react-native-paper";
 import { useNavigation } from "@react-navigation/native";
-
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFirebase } from "../App";
-
+import { FormItem } from "./components/FormItem";
 import { useAuth } from "./AuthProvider";
 
 const upKrakowEmailRegexp = /^[a-z]+.[a-z]+[@]student\.up\.krakow\.pl+$/;
