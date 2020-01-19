@@ -1,6 +1,4 @@
-export function renderName(
-  email: string = "pawel.falisz@student.up.krakow.pl"
-) {
+export function renderName(email: string) {
   const [firstName, lastNameWithEmail] = email.split(".");
 
   const lastName = lastNameWithEmail.split("@")[0];

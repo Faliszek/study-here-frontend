@@ -14,30 +14,11 @@ import NewPostScreen from "./NewPostScreen";
 
 import { useFirebase } from "../App";
 
-const posts: Array<PostT> = [
-  {
-    id: "1",
-    authorId: "FQondaXEKLesgQFqJFF0UU5Rk593",
-    authorEmail: "thomas.shelby@student.up.krakow.pl",
-    content: `Dolor sit amet, consectetur adipiscing elit. \n\nVestibulum semper, lectus sit amet scelerisque euismod, tortor libero luctus turpis, quis \nefficitur lectus augue id ante. Praesent venenatis varius placerat`,
-    date: 19292939123,
-    comments: []
-  },
-  {
-    id: "2",
-    authorId: "FQondaXEKLesgQFqJFF0UU5Rk593",
-    authorEmail: "thomas.shelby@student.up.krakow.pl",
-    content: `Dolor sit amet, consectetur adipiscing elit. \n\nVestibulum semper, lectus sit amet scelerisque euismod, tortor libero luctus turpis, quis \nefficitur lectus augue id ante. Praesent venenatis varius placerat`,
-    date: 19292939123,
-    comments: []
-  }
-];
-
 export default function MainScreen() {
   const [visible, setVisible] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [editedId, setEditedId] = React.useState(null);
-  const [newPost, setNewPost] = React.useState("My new post\n\nCheers.");
+  const [newPost, setNewPost] = React.useState("");
   const [posts, setPosts] = React.useState([]);
   const firebase = useFirebase();
   const [snackBarVisible, setSnackBarVisible] = React.useState(false);
@@ -77,10 +58,14 @@ export default function MainScreen() {
           editedId={editedId}
           value={newPost}
           onChange={value => setNewPost(value)}
-          onAdd={() => setVisible(false)}
+          onAdd={() => {
+            setVisible(false);
+            setNewPost("");
+          }}
           onFinishEdit={() => {
             setEditedId(null);
             setVisible(false);
+            setNewPost("");
           }}
         />
       ) : (
