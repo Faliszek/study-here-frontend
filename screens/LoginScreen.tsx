@@ -31,8 +31,8 @@ const schema = yup.object({
 });
 
 const initialValues = {
-  email: "pawel.falisz@student.up.krakow.pl",
-  password: "alamakota"
+  email: "",
+  password: ""
 };
 
 export default function LoginScreen() {
