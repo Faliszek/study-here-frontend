@@ -75,7 +75,8 @@ export default function NewPost(props: {
                     authorId: auth.uid,
                     authorEmail: auth.email,
                     content: props.value,
-                    date: Date.now()
+                    date: Date.now(),
+                    comments: []
                   })
                   .then(() => {
                     setMessage("Pomyślnie dodano post");
