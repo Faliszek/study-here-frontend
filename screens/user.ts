@@ -16,14 +16,13 @@ export function renderInitials(email: string) {
 }
 
 //this function for every char in part get value ascii
-//so max value (small z = 122) is 122 * 8, we calculate proportions for
-// for 200
+//so max value (small z = 122) is 122 * 8, and then we get % 200 to get valid color
 function reducePartOfIdToColor(partId: string) {
   let val = partId.split("").reduce((acc, sign) => {
-    return acc + Number(sign.charCodeAt(0));
+    return acc + Number(sign.charCodeAt(0) - 65);
   }, 0);
 
-  return Math.floor((val / (122 * partId.length)) * 200);
+  return val % 200;
 }
 
 export function getColor(id: string) {

@@ -2,17 +2,28 @@ import React from "react";
 
 import { View, StyleSheet } from "react-native";
 
-import { Button, TextInput } from "react-native-paper";
+import { Button, TextInput, Snackbar } from "react-native-paper";
 import { useAuth } from "./AuthProvider";
 import { AuthorDetails } from "./components/Post";
+import { useFirebase } from "../App";
+
+import * as Post from "./post";
 // import { useAuth } from "./AuthProvider";
 
 export default function NewPost(props: {
   value: string;
   onChange: (v: string) => void;
+  onAdd: () => void;
+  editedId?: string;
+  onFinishEdit: () => void;
 }) {
   const ref = React.useRef(null);
   const { auth } = useAuth();
+  const firebase = useFirebase();
+
+  const [visible, setVisible] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [message, setMessage] = React.useState("");
 
   React.useEffect(() => {
     if (ref.current) {
@@ -24,7 +35,60 @@ export default function NewPost(props: {
     <View>
       <View style={{ padding: 16, marginBottom: 8 }}>
         <AuthorDetails id={auth.uid} email={auth.email}>
-          <Button mode="contained">Dodaj post</Button>
+          {props.editedId ? (
+            <Button
+              onPress={() => {
+                setLoading(true);
+
+                return firebase
+                  .database()
+                  .ref(`comments/${props.editedId}`)
+                  .update({
+                    authorId: auth.uid,
+                    authorEmail: auth.email,
+                    content: props.value,
+                    date: Date.now()
+                  })
+                  .then(() => {
+                    setMessage("Pomyślnie zapisano zmiany");
+                  })
+                  .catch(() => setMessage("❌ Nie udało się zapisać zmian"))
+                  .finally(() => {
+                    setLoading(false);
+                    props.onFinishEdit();
+                  });
+              }}
+              loading={loading}
+            >
+              Zapisz zmiany
+            </Button>
+          ) : (
+            <Button
+              mode="contained"
+              onPress={() => {
+                setLoading(true);
+
+                return firebase
+                  .database()
+                  .ref(`comments/${Post.uuid()}`)
+                  .set({
+                    authorId: auth.uid,
+                    authorEmail: auth.email,
+                    content: props.value,
+                    date: Date.now()
+                  })
+                  .then(() => {
+                    setMessage("Pomyślnie dodano post");
+                    props.onAdd();
+                  })
+                  .catch(() => setMessage("❌ Nie udało się dodać postu"))
+                  .finally(() => setLoading(false));
+              }}
+              loading={loading}
+            >
+              Opublikuj
+            </Button>
+          )}
         </AuthorDetails>
       </View>
       <TextInput
@@ -36,6 +100,9 @@ export default function NewPost(props: {
         ref={ref}
         multiline={true}
       />
+      <Snackbar visible={visible} onDismiss={() => setVisible(false)}>
+        {message}
+      </Snackbar>
     </View>
   );
 }

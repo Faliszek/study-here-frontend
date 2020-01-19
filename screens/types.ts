@@ -1,11 +1,8 @@
-type User = {
-  id: string;
-  email: string;
-};
-
 interface PostT {
   id: string;
   content: string;
-  author: User;
+  authorId: string;
+  authorEmail: string;
   date: number;
+  comments: Array<PostT>;
 }

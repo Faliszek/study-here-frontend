@@ -40,6 +40,7 @@ import { createMaterialBottomTabNavigator } from "@react-navigation/material-bot
 
 import firebase from "firebase/app";
 import "firebase/auth";
+import "firebase/database";
 import { AuthProvider } from "./screens/AuthProvider";
 
 const Stack = createStackNavigator();
