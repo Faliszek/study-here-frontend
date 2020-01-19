@@ -90,7 +90,6 @@ export function AuthProvider({ children }: Props) {
     setAuth: (auth: Auth) => dispatch({ type: "setAuth", payload: auth }),
     signOut: () => dispatch({ type: "signOut" })
   };
-
   return (
     <Context.Provider value={newState}>{children(newState)}</Context.Provider>
   );

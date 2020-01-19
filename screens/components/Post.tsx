@@ -66,7 +66,7 @@ export function Post(props: Props) {
           <Caption>{moment(p.date).format("HH:mm DD.MM.YYYY")}</Caption>
         </View>
       </AuthorDetails>
-      <View style={{ paddingVertical: 8 }}>
+      <View style={{ paddingVertical: 8, paddingTop: 16 }}>
         <Paragraph>{p.content} </Paragraph>
       </View>
       {p.authorId === auth.uid && (

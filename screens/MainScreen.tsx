@@ -4,9 +4,12 @@ import { StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native";
 import { FAB, ActivityIndicator, Snackbar } from "react-native-paper";
 
 import { Post } from "./components/Post";
+import { NoData } from "./components/NoData";
 import NewPostScreen from "./NewPostScreen";
 
 import { useFirebase } from "../App";
+import { NavBar } from "./components/NavBar";
+import { useAuth } from "./AuthProvider";
 
 export default function MainScreen() {
   const [visible, setVisible] = React.useState(false);
@@ -18,13 +21,13 @@ export default function MainScreen() {
   const [snackBarVisible, setSnackBarVisible] = React.useState(false);
   const [snackBarMessage, setSnackBarMessage] = React.useState("");
 
+  const auth = useAuth();
   React.useEffect(() => {
-    var starCountRef = firebase.database().ref("comments");
+    const posts = firebase.database().ref("comments");
     setLoading(true);
-    starCountRef.on("value", function(snapshot) {
-      const posts = snapshot.val();
-      const keys: Array<string> = Object.keys(posts);
-
+    posts.on("value", function(snapshot) {
+      const posts = snapshot.val() || {};
+      const keys: Array<string> = Object.keys(posts) || [];
       const newPosts = keys
         .reduce((acc, key) => {
           return acc.concat([
@@ -35,75 +38,94 @@ export default function MainScreen() {
           ]);
         }, [])
         .sort((a, b) => b.date - a.date);
-
       setPosts(newPosts);
       setLoading(false);
     });
   }, []);
-  return (
-    <KeyboardAvoidingView
-      behavior={"height"}
-      style={styles.container}
-      enabled
-      keyboardVerticalOffset={84}
-    >
-      {visible ? (
-        <NewPostScreen
-          editedId={editedId}
-          value={newPost}
-          onChange={value => setNewPost(value)}
-          onAdd={() => {
-            setVisible(false);
-            setNewPost("");
-          }}
-          onFinishEdit={() => {
-            setEditedId(null);
-            setVisible(false);
-            setNewPost("");
-          }}
-        />
-      ) : (
-        <ScrollView>
-          {loading ? (
-            <ActivityIndicator animating={true} size="large" />
-          ) : (
-            posts.map(p => (
-              <Post
-                key={p.id}
-                post={p}
-                onEdit={() => {
-                  setNewPost(p.content);
-                  setVisible(true);
-                  setEditedId(p.id);
-                }}
-                onRemoveSuccess={() => {
-                  setSnackBarMessage("Pomyślnie usunięto wpis");
-                  setSnackBarVisible(true);
-                }}
-                onRemoveError={() => {
-                  setSnackBarMessage("Nie udało się usunąć wpisu");
-                  setSnackBarVisible(true);
-                }}
-              />
-            ))
-          )}
-        </ScrollView>
-      )}
 
-      <Snackbar
-        visible={snackBarVisible}
-        onDismiss={() => setSnackBarVisible(false)}
-      >
-        {snackBarMessage}
-      </Snackbar>
+  const postsView =
+    posts.length !== 0 && !loading && !visible ? (
+      <ScrollView>
+        {posts.map(p => (
+          <Post
+            key={p.id}
+            post={p}
+            onEdit={() => {
+              setNewPost(p.content);
+              setVisible(true);
+              setEditedId(p.id);
+            }}
+            onRemoveSuccess={() => {
+              setSnackBarMessage("Pomyślnie usunięto wpis");
+              setSnackBarVisible(true);
+            }}
+            onRemoveError={() => {
+              setSnackBarMessage("Nie udało się usunąć wpisu");
+              setSnackBarVisible(true);
+            }}
+          />
+        ))}
+      </ScrollView>
+    ) : null;
 
-      <FAB
-        color={"white"}
-        style={styles.fab}
-        icon={visible ? "close" : "plus"}
-        onPress={() => setVisible(v => !v)}
+  const loader =
+    loading && !visible ? (
+      <ActivityIndicator
+        animating={true}
+        size="large"
+        style={{ marginTop: 64 }}
       />
-    </KeyboardAvoidingView>
+    ) : null;
+
+  const noData =
+    posts.length === 0 && !loading && !visible ? (
+      <NoData onClick={() => setVisible(true)} />
+    ) : null;
+
+  const newPostView = visible ? (
+    <NewPostScreen
+      editedId={editedId}
+      value={newPost}
+      onChange={value => setNewPost(value)}
+      onAdd={() => {
+        setVisible(false);
+        setNewPost("");
+      }}
+      onFinishEdit={() => {
+        setEditedId(null);
+        setVisible(false);
+        setNewPost("");
+      }}
+    />
+  ) : null;
+
+  return (
+    <>
+      <NavBar signOut={auth.signOut} title={"Posty"} />
+      <KeyboardAvoidingView
+        behavior={"height"}
+        style={styles.container}
+        enabled
+        keyboardVerticalOffset={84}
+      >
+        {noData}
+        {postsView}
+        {loader}
+        {newPostView}
+        <Snackbar
+          visible={snackBarVisible}
+          onDismiss={() => setSnackBarVisible(false)}
+        >
+          {snackBarMessage}
+        </Snackbar>
+        <FAB
+          color={"white"}
+          style={styles.fab}
+          icon={visible ? "close" : "plus"}
+          onPress={() => setVisible(v => !v)}
+        />
+      </KeyboardAvoidingView>
+    </>
   );
 }
 

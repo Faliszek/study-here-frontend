@@ -28,6 +28,8 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
 import { AuthProvider } from "./screens/AuthProvider";
+import { useNavigation } from "@react-navigation/native";
+import { NavBar } from "./screens/components/NavBar";
 
 const Stack = createStackNavigator();
 const MenuStack = createMaterialBottomTabNavigator();
@@ -60,10 +62,6 @@ const theme = {
 export default function App(props) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
 
-  const [visible, setVisible] = React.useState(false);
-
-  React.useEffect(() => {}, []);
-
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
       <AppLoading
@@ -78,31 +76,12 @@ export default function App(props) {
         <StatusBar barStyle="dark-content" />
 
         <AuthProvider>
-          {({ auth, signOut }) => (
+          {({ auth }) => (
             <>
               <PaperProvider theme={theme}>
                 <View style={styles.container}>
                   {auth.token ? (
                     <NavigationNativeContainer>
-                      <Appbar.Header>
-                        <Appbar.Content title="iStudyHere" />
-                        <Menu
-                          visible={visible}
-                          onDismiss={() => setVisible(false)}
-                          anchor={
-                            <Appbar.Action
-                              icon="dots-vertical"
-                              color="white"
-                              onPress={() => setVisible(true)}
-                            />
-                          }
-                        >
-                          <Menu.Item
-                            onPress={() => signOut()}
-                            title="Wyloguj się"
-                          />
-                        </Menu>
-                      </Appbar.Header>
                       <MenuStack.Navigator initialRouteName="Main">
                         <MenuStack.Screen
                           name="Main"

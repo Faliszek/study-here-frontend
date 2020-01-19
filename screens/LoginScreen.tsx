@@ -53,6 +53,7 @@ export default function LoginScreen() {
           .auth()
           .signInWithEmailAndPassword(values.email, values.password)
           .then(res => {
+            console.log("Login success", values);
             return res.user.getIdToken().then(token => {
               setMessage("Pomyślnie zalogowano");
               setVisible(true);
