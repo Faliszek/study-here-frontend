@@ -5,16 +5,12 @@ import React, { useState } from "react";
 import { Platform, StyleSheet, View, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-// import AppNavigator from "./navigation/AppNavigator";
-
 import MainScreen from "./screens/MainScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import RegisterInfoScreen from "./screens/RegisterInfoScreen";
-
-// import { BottomNavigation } from "react-native-paper";
 
 import {
   Appbar,
@@ -51,8 +47,6 @@ export function useFirebase() {
   return f;
 }
 
-/* {Platform.OS === "ios" && <StatusBar barStyle="default" />} */
-
 const theme = {
   ...DefaultTheme,
   dark: true,
@@ -80,78 +74,80 @@ export default function App(props) {
     );
   } else {
     return (
-      <AuthProvider>
-        {({ auth, signOut }) => (
-          <>
-            <StatusBar />
+      <>
+        <StatusBar barStyle="dark-content" />
 
-            <PaperProvider theme={theme}>
-              <View style={styles.container}>
-                {auth.token ? (
-                  <NavigationNativeContainer>
-                    <Appbar.Header>
-                      <Appbar.Content title="iStudyHere" />
-                      <Menu
-                        visible={visible}
-                        onDismiss={() => setVisible(false)}
-                        anchor={
-                          <Appbar.Action
-                            icon="dots-vertical"
-                            color="white"
-                            onPress={() => setVisible(true)}
+        <AuthProvider>
+          {({ auth, signOut }) => (
+            <>
+              <PaperProvider theme={theme}>
+                <View style={styles.container}>
+                  {auth.token ? (
+                    <NavigationNativeContainer>
+                      <Appbar.Header>
+                        <Appbar.Content title="iStudyHere" />
+                        <Menu
+                          visible={visible}
+                          onDismiss={() => setVisible(false)}
+                          anchor={
+                            <Appbar.Action
+                              icon="dots-vertical"
+                              color="white"
+                              onPress={() => setVisible(true)}
+                            />
+                          }
+                        >
+                          <Menu.Item
+                            onPress={() => signOut()}
+                            title="Wyloguj się"
                           />
-                        }
-                      >
-                        <Menu.Item
-                          onPress={() => signOut()}
-                          title="Wyloguj się"
+                        </Menu>
+                      </Appbar.Header>
+                      <MenuStack.Navigator initialRouteName="Main">
+                        <MenuStack.Screen
+                          name="Main"
+                          component={MainScreen}
+                          options={{
+                            tabBarIcon: "newspaper",
+                            tabBarLabel: "Feed"
+                          }}
                         />
-                      </Menu>
-                    </Appbar.Header>
-                    <MenuStack.Navigator initialRouteName="Main">
-                      <MenuStack.Screen
-                        name="Main"
-                        component={MainScreen}
-                        options={{
-                          tabBarIcon: "newspaper",
-                          tabBarLabel: "Feed"
-                        }}
-                      />
 
-                      <MenuStack.Screen
-                        name="Settings"
-                        component={SettingsScreen}
-                        options={{
-                          tabBarIcon: "settings",
-                          tabBarLabel: "Ustawienia"
-                        }}
-                      />
-                    </MenuStack.Navigator>
-                  </NavigationNativeContainer>
-                ) : (
-                  <NavigationNativeContainer>
-                    <Stack.Navigator
-                      initialRouteName={"Login"}
-                      headerMode="none"
-                      mode="card"
-                    >
-                      <Stack.Screen name="Login" component={LoginScreen} />
-                      <Stack.Screen
-                        name="Register"
-                        component={RegisterScreen}
-                      />
-                      <Stack.Screen
-                        name="RegisterInfo"
-                        component={RegisterInfoScreen}
-                      />
-                    </Stack.Navigator>
-                  </NavigationNativeContainer>
-                )}
-              </View>
-            </PaperProvider>
-          </>
-        )}
-      </AuthProvider>
+                        <MenuStack.Screen
+                          name="Settings"
+                          component={SettingsScreen}
+                          options={{
+                            tabBarIcon: "settings",
+                            tabBarLabel: "Ustawienia"
+                          }}
+                        />
+                      </MenuStack.Navigator>
+                    </NavigationNativeContainer>
+                  ) : (
+                    <NavigationNativeContainer>
+                      <Stack.Navigator
+                        initialRouteName={"Login"}
+                        headerMode="none"
+                        mode="card"
+                      >
+                        <Stack.Screen name="Login" component={LoginScreen} />
+                        <Stack.Screen
+                          name="Register"
+                          component={RegisterScreen}
+                        />
+                        <Stack.Screen
+                          name="RegisterInfo"
+                          component={RegisterInfoScreen}
+                        />
+                      </Stack.Navigator>
+                    </NavigationNativeContainer>
+                  )}
+                </View>
+              </PaperProvider>
+            </>
+          )}
+        </AuthProvider>
+      </>
     );
   }
 }

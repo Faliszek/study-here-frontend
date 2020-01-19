@@ -10,6 +10,4 @@ export default function SettingsScreen() {
   return <Text>Settings</Text>;
 }
 
-SettingsScreen.navigationOptions = {
-  title: "app.json"
-};
+SettingsScreen.navigationOptions = {};
