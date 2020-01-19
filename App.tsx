@@ -15,6 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 import MainScreen from "./screens/MainScreen";
 import SettingsScreen from "./screens/SettingsScreen";
+import NewPostScreen from "./screens/NewPostScreen";
 
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
@@ -35,11 +36,15 @@ import {
 import { NavigationNativeContainer } from "@react-navigation/native";
 
 import { createStackNavigator } from "@react-navigation/stack";
+import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
+
 import firebase from "firebase/app";
 import "firebase/auth";
 import { AuthProvider } from "./screens/AuthProvider";
 
 const Stack = createStackNavigator();
+const NewPostStack = createStackNavigator();
+const MenuStack = createMaterialBottomTabNavigator();
 
 const routes = [
   { key: "main", title: "Feed", icon: "newspaper" },
@@ -82,11 +87,10 @@ export default function App(props) {
   const renderScene = BottomNavigation.SceneMap({
     main: MainScreen,
     settings: SettingsScreen
+    // newPost: NewPost
   });
 
-  React.useEffect(() => {
-    console.log("App mounted", props);
-  }, []);
+  React.useEffect(() => {}, []);
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
@@ -106,10 +110,9 @@ export default function App(props) {
             <PaperProvider theme={theme}>
               <View style={styles.container}>
                 {auth.token ? (
-                  <>
+                  <NavigationNativeContainer>
                     <Appbar.Header>
                       <Appbar.Content title="iStudyHere" />
-
                       <Menu
                         visible={visible}
                         onDismiss={() => setVisible(false)}
@@ -127,13 +130,26 @@ export default function App(props) {
                         />
                       </Menu>
                     </Appbar.Header>
+                    <MenuStack.Navigator initialRouteName="Main">
+                      <MenuStack.Screen
+                        name="Main"
+                        component={MainScreen}
+                        options={{
+                          tabBarIcon: "newspaper",
+                          tabBarLabel: "Feed"
+                        }}
+                      />
 
-                    <BottomNavigation
-                      navigationState={{ index: routeIndex, routes }}
-                      onIndexChange={routeIndex => setRouteIndex(routeIndex)}
-                      renderScene={renderScene}
-                    />
-                  </>
+                      <MenuStack.Screen
+                        name="Settings"
+                        component={SettingsScreen}
+                        options={{
+                          tabBarIcon: "settings",
+                          tabBarLabel: "Ustawienia"
+                        }}
+                      />
+                    </MenuStack.Navigator>
+                  </NavigationNativeContainer>
                 ) : (
                   <NavigationNativeContainer>
                     <Stack.Navigator

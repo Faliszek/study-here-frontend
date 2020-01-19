@@ -2,23 +2,27 @@ import React from "react";
 import {
   View,
   StyleSheet,
-  // TouchableOpacity,
-  ScrollView
+  ScrollView,
+  KeyboardAvoidingView
 } from "react-native";
+
+import { Header } from "@react-navigation/stack";
 
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Button, FAB, TextInput, Surface } from "react-native-paper";
-
-import { Post } from "./components/Post";
 import { useAuth } from "./AuthProvider";
 
-const posts: Array<Post> = [
+import { Post } from "./components/Post";
+import NewPostScreen from "./NewPostScreen";
+
+import { useNavigation } from "@react-navigation/native";
+
+const posts: Array<PostT> = [
   {
     id: "1",
     author: {
-      id: "1",
-      firstName: "Thomas",
-      lastName: "Shelby"
+      id: "FQondaXEKLesgQFqJFF0UU5Rk593",
+      email: "thomas.shelby@student.up.krakow.pl"
     },
 
     content: `Dolor sit amet, consectetur adipiscing elit. \n\nVestibulum semper, lectus sit amet scelerisque euismod, tortor libero luctus turpis, quis \nefficitur lectus augue id ante. Praesent venenatis varius placerat`,
@@ -27,9 +31,8 @@ const posts: Array<Post> = [
   {
     id: "2",
     author: {
-      id: "1",
-      firstName: "Thomas",
-      lastName: "Shelby"
+      id: "FQondaXEKLesgQFqJFF0UU5Rk593",
+      email: "thomas.shelby@student.up.krakow.pl"
     },
 
     content: `Dolor sit amet, consectetur adipiscing elit. \n\nVestibulum semper, lectus sit amet scelerisque euismod, tortor libero luctus turpis, quis \nefficitur lectus augue id ante. Praesent venenatis varius placerat`,
@@ -40,79 +43,33 @@ const posts: Array<Post> = [
 export default function MainScreen() {
   const [visible, setVisible] = React.useState(false);
   const [newPost, setNewPost] = React.useState("");
-  const ref = React.useRef(null);
-
-  React.useEffect(() => {
-    if (visible && ref.current) {
-      ref.current.focus();
-    }
-  }, [visible]);
 
   return (
-    <View style={styles.container}>
-      <Surface
-        style={{
-          top: visible ? 0 : -400,
-          backgroundColor: "#fff",
-          elevation: 4,
-          height: 400,
-          width: "100%",
-          padding: 16,
-          position: "absolute"
-        }}
-      >
-        <View style={{ flex: 1 }}>
-          <KeyboardAwareScrollView
-            style={styles.container}
-            enableOnAndroid={true}
-          >
-            <TextInput
-              mode="outlined"
-              style={[styles.inputContainerStyle, styles.textArea]}
-              multiline
-              placeholder="Treść wpisu"
-              value={newPost}
-              onChangeText={newPost => setNewPost(newPost)}
-              onBlur={() => setVisible(_ => false)}
-              ref={ref}
-              numberOfLines={4}
-            />
-          </KeyboardAwareScrollView>
-        </View>
-        <Button
-          color={"white"}
-          icon="send"
-          disabled={newPost.length === 0}
-          onPress={() => {
-            setVisible(_ => false);
-            ref.current && ref.current.blur();
-          }}
-        >
-          Dodaj post
-        </Button>
-      </Surface>
-
-      <ScrollView
-        style={{
-          top: visible ? 400 : 0
-        }}
-      >
-        {posts.map(p => (
-          <Post post={p} />
-        ))}
-      </ScrollView>
+    <KeyboardAvoidingView
+      behavior={"height"}
+      style={styles.container}
+      enabled
+      keyboardVerticalOffset={84}
+    >
+      {visible ? (
+        <NewPostScreen value={newPost} onChange={value => setNewPost(value)} />
+      ) : (
+        <ScrollView>
+          {posts.map(p => (
+            <Post post={p} />
+          ))}
+        </ScrollView>
+      )}
 
       <FAB
         color={"white"}
         style={styles.fab}
         icon={visible ? "close" : "plus"}
-        onPress={() => setVisible(_ => !visible)}
+        onPress={() => setVisible(v => !v)}
       />
-    </View>
+    </KeyboardAvoidingView>
   );
 }
-
-MainScreen.navigationOptions = {};
 
 const styles = StyleSheet.create({
   container: {

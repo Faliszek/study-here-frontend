@@ -1,10 +1,9 @@
 type User = {
   id: string;
-  firstName: string;
-  lastName: string;
+  email: string;
 };
 
-interface Post {
+interface PostT {
   id: string;
   content: string;
   author: User;

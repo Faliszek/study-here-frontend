@@ -21,8 +21,6 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { useNavigation } from "@react-navigation/native";
 import { useFirebase } from "../App";
 import { useAuth } from "./AuthProvider";
-// import * as firebase from "firebase/app";
-// import "firebase/auth";
 
 const schema = yup.object({
   email: yup

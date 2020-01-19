@@ -2,14 +2,37 @@ import React from "react";
 import moment from "moment";
 import { View } from "react-native";
 
-import { Surface, Avatar, Paragraph, Caption, Text } from "react-native-paper";
+import { Surface, Paragraph, Caption, Text } from "react-native-paper";
+
+import * as User from "../user";
+
+import { Avatar } from "./Avatar";
 
 type Props = {
-  post: Post;
+  post: PostT;
 };
+
+export function AuthorDetails({ id, email, children }) {
+  return (
+    <View
+      style={{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center"
+      }}
+    >
+      <View style={{ flexDirection: "row", alignItems: "center" }}>
+        <Avatar id={id} email={email} />
+        <Text style={{ marginLeft: 16 }}>{User.renderName(email)}</Text>
+      </View>
+      {children}
+    </View>
+  );
+}
 
 export function Post(props: Props) {
   const { post: p } = props;
+
   return (
     <Surface
       key={p.id}
@@ -20,27 +43,11 @@ export function Post(props: Props) {
         marginBottom: 8
       }}
     >
-      <View
-        style={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center"
-        }}
-      >
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Avatar.Text
-            size={48}
-            label={p.author.firstName[0] + p.author.lastName[0]}
-            style={{ backgroundColor: "red" }}
-          />
-          <Text style={{ marginLeft: 16 }}>
-            {p.author.firstName + " " + p.author.lastName}
-          </Text>
-        </View>
+      <AuthorDetails id={p.author.id} email={p.author.email}>
         <View>
           <Caption>{moment(p.date).format("DD.MM.YYYY")}</Caption>
         </View>
-      </View>
+      </AuthorDetails>
       <View style={{ paddingVertical: 8 }}>
         <Paragraph>{p.content} </Paragraph>
       </View>
