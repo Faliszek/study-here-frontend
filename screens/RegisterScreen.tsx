@@ -30,13 +30,19 @@ const schema = yup.object({
     })
 });
 
+interface FormValues {
+  email: string;
+  password: string;
+  repeatPassword: string,
+};
+
 const initialValues = {
   email: "",
   password: "",
   repeatPassword: ""
 };
 
-export default function RegisterScreen() {
+const RegisterScreen = () => {
   const nav = useNavigation();
   const firebase = useFirebase();
 
@@ -60,14 +66,16 @@ export default function RegisterScreen() {
               .auth()
               .signInWithEmailAndPassword(values.email, values.password)
               .then(res => {
-                return res.user.getIdToken().then(token => {
-                  setMessage("Pomyślnie zalogowano");
-                  setAuth({
-                    uid: res.user.uid,
-                    email: res.user.email,
-                    token
+                if(res && res.user) {
+                  return res.user.getIdToken().then(token => {
+                    setMessage("Pomyślnie zalogowano");
+                    setAuth({
+                      uid: res.user.uid,
+                      email: res.user.email,
+                      token
+                    });
                   });
-                });
+                }
               })
               .catch(() => {
                 setMessage("Nie udało się zalogować, spróbój ponownie poźniej");
@@ -169,7 +177,9 @@ export default function RegisterScreen() {
       }}
     </Formik>
   );
-}
+};
+
+export default RegisterScreen;
 
 const styles = StyleSheet.create({
   container: {

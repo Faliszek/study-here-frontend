@@ -1,7 +1,7 @@
+import React, { useState } from "react";
 import { AppLoading } from "expo";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
-import React, { useState } from "react";
 import { Platform, StyleSheet, View, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -30,6 +30,7 @@ import "firebase/database";
 import { AuthProvider } from "./screens/AuthProvider";
 import { useNavigation } from "@react-navigation/native";
 import { NavBar } from "./screens/components/NavBar";
+import {JSXElement} from "@babel/types";
 
 const Stack = createStackNavigator();
 const MenuStack = createMaterialBottomTabNavigator();
@@ -59,22 +60,30 @@ const theme = {
   }
 };
 
-export default function App(props) {
+interface AppProps{
+  skipLoadingScreen: boolean,
+}
+
+export default function App(props: AppProps) {
   const [isLoadingComplete, setLoadingComplete] = useState(false);
+
+  const handleFinishLoading = () => {
+    setLoadingComplete(true);
+  };
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
-      <AppLoading
-        startAsync={loadResourcesAsync}
-        onError={handleLoadingError}
-        onFinish={() => handleFinishLoading(setLoadingComplete)}
-      />
+        // @ts-ignore
+        <AppLoading
+          startAsync={loadResourcesAsync}
+          onError={handleLoadingError}
+          onFinish={() => handleFinishLoading()}
+        />
     );
-  } else {
-    return (
+  }
+  return (
       <>
         <StatusBar barStyle="dark-content" />
-
         <AuthProvider>
           {({ auth }) => (
             <>
@@ -91,7 +100,6 @@ export default function App(props) {
                             tabBarLabel: "Feed"
                           }}
                         />
-
                         <MenuStack.Screen
                           name="Settings"
                           component={SettingsScreen}
@@ -109,7 +117,10 @@ export default function App(props) {
                         headerMode="none"
                         mode="card"
                       >
-                        <Stack.Screen name="Login" component={LoginScreen} />
+                        <Stack.Screen
+                            name="Login"
+                            component={LoginScreen}
+                        />
                         <Stack.Screen
                           name="Register"
                           component={RegisterScreen}
@@ -128,7 +139,6 @@ export default function App(props) {
         </AuthProvider>
       </>
     );
-  }
 }
 
 async function loadResourcesAsync() {
@@ -147,15 +157,13 @@ async function loadResourcesAsync() {
   ]);
 }
 
-function handleLoadingError(error) {
+function handleLoadingError(error: Error) {
   // In this case, you might want to report the error to your error reporting
   // service, for example Sentry
   console.warn(error);
 }
 
-function handleFinishLoading(setLoadingComplete) {
-  setLoadingComplete(true);
-}
+
 
 const styles = StyleSheet.create({
   container: {
