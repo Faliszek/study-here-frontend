@@ -22,7 +22,7 @@ const schema = yup.object({
   password: yup
     .string()
     .required("Hasło jest wymagane")
-    .min(6, "Hasło powinno zawierać conajmniej 6 znaków"),
+    .min(6, "Hasło powinno zawierać co najmniej 6 znaków"),
   repeatPassword: yup
     .string()
     .test("password", "Hasła muszą być takie same!", function(value) {
@@ -60,30 +60,18 @@ const RegisterScreen = () => {
           .then(() => {
             setVisible(true);
             setMessage(
-              "Pomyślnie utworzono konto, za chwilkę zostaniesz zalogowany!"
+              "Pomyślnie utworzono konto, za chwilę otrzymasz email weryfikacyjny!"
             );
-            return firebase
-              .auth()
-              .signInWithEmailAndPassword(values.email, values.password)
-              .then(res => {
-                if(res && res.user) {
-                  return res.user.getIdToken().then(token => {
-                    setMessage("Pomyślnie zalogowano");
-                    setAuth({
-                      uid: res.user.uid,
-                      email: res.user.email,
-                      token
-                    });
-                  });
-                }
-              })
-              .catch(() => {
-                setMessage("Nie udało się zalogować, spróbój ponownie poźniej");
-              });
+
+            const user = firebase.auth().currentUser;
+            user.sendEmailVerification()
+                .then(() => {
+                  nav.navigate("ConfirmEmail");
+                })
           })
           .catch(() => {
             setVisible(true);
-            setMessage("Nie udało się utworzyć konta, spróboj ponownie");
+            setMessage("Nie udało się utworzyć konta, spróbuj ponownie");
           })
           .finally(() => {
             actions.setSubmitting(false);

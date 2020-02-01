@@ -11,6 +11,7 @@ import SettingsScreen from "./screens/SettingsScreen";
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import RegisterInfoScreen from "./screens/RegisterInfoScreen";
+import ConfirmEmailScreen from './screens/ConfirmEmailScreen';
 
 import {
   Appbar,
@@ -44,6 +45,17 @@ const firebaseConfig = {
   messagingSenderId: "643441923641",
   appId: "1:643441923641:web:e64ac007feac179d8e5fe8"
 };
+
+//  dawid firebase - zeby odblokować weryfikacje przez maila wystarczy w metodach logowania zaznaczyc druga opcje
+// const firebaseConfig = {
+//   apiKey: "AIzaSyBuPvhovKmz_8joNYrCcekm58BdbcMzbEU",
+//   authDomain: "react-native-test-e16b0.firebaseapp.com",
+//   databaseURL: "https://react-native-test-e16b0.firebaseio.com",
+//   projectId: "react-native-test-e16b0",
+//   storageBucket: "react-native-test-e16b0.appspot.com",
+//   messagingSenderId: "828671478639",
+//   appId: "1:828671478639:web:9f492ad2b6f4f8604db69a"
+// };
 
 const f = firebase.initializeApp(firebaseConfig, "i-study-here");
 export function useFirebase() {
@@ -128,6 +140,10 @@ export default function App(props: AppProps) {
                         <Stack.Screen
                           name="RegisterInfo"
                           component={RegisterInfoScreen}
+                        />
+                        <Stack.Screen
+                            name="ConfirmEmail"
+                            component={ConfirmEmailScreen}
                         />
                       </Stack.Navigator>
                     </NavigationNativeContainer>
