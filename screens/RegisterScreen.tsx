@@ -7,18 +7,32 @@ import { useNavigation } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useFirebase } from "../App";
 import { FormItem } from "./components/FormItem";
-import { useAuth } from "./AuthProvider";
 
-const upKrakowEmailRegexp = /^[a-z]+.[a-z]+[@]student\.up\.krakow\.pl+$/;
+const studentEmailRegexp = /^[a-zA-Z]+.[a-zA-Z]+[@]student\.up\.krakow\.pl+$/;
+const teacherEmailRegexp = /^[a-zA-Z]+.[a-zA-Z]+[@]+up\.krakow\.pl+$/;
+
+yup.addMethod(yup.mixed, "isInDomain", function(message) {
+  return this.test("email", message, function(value) {
+    return new Promise((resolve, reject) => {
+      const { path } = this;
+      if (studentEmailRegexp.test(value)) {
+        resolve(true);
+      } else if (teacherEmailRegexp.test(value)) {
+        resolve(true);
+      } else {
+        reject(this.createError({ path, message }));
+      }
+    });
+  });
+});
 
 const schema = yup.object({
   email: yup
     .string()
     .required("Email jest wymagany")
     .email("Podany e-mail jest niepoprawny")
-    .matches(upKrakowEmailRegexp, {
-      message: "Email powinnien mieć formę xxx.yyy@student.up.krakow.pl"
-    }),
+    //@ts-ignore
+    .isInDomain("Email powinnien być w domenie up.krakow.pl"),
   password: yup
     .string()
     .required("Hasło jest wymagane")
@@ -33,8 +47,8 @@ const schema = yup.object({
 interface FormValues {
   email: string;
   password: string;
-  repeatPassword: string,
-};
+  repeatPassword: string;
+}
 
 const initialValues = {
   email: "",
@@ -49,8 +63,6 @@ const RegisterScreen = () => {
   const [visible, setVisible] = React.useState(false);
   const [message, setMessage] = React.useState("");
 
-  const { setAuth } = useAuth();
-
   return (
     <Formik
       onSubmit={(values, actions) => {
@@ -64,10 +76,11 @@ const RegisterScreen = () => {
             );
 
             const user = firebase.auth().currentUser;
-            user.sendEmailVerification()
-                .then(() => {
-                  nav.navigate("ConfirmEmail");
-                })
+            if (user) {
+              user.sendEmailVerification().then(() => {
+                nav.navigate("ConfirmEmail");
+              });
+            }
           })
           .catch(() => {
             setVisible(true);
@@ -107,9 +120,10 @@ const RegisterScreen = () => {
                   }}
                   label={"Email"}
                   placeholder={"Email"}
-                  onBlur={() => {
-                    handleBlur("email");
+                  onBlur={(e: any) => {
+                    const blur = handleBlur("email");
                     setFieldValue("email", values.email.trim().toLowerCase());
+                    blur(e);
                   }}
                   autoCompleteType={"email"}
                 />

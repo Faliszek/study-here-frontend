@@ -12,7 +12,7 @@ export default function NewPost(props: {
   value: string;
   onChange: (v: string) => void;
   onAdd: () => void;
-  editedId?: string;
+  editedId: string | null;
   onFinishEdit: () => void;
 }) {
   const ref = React.useRef(null);
@@ -25,6 +25,7 @@ export default function NewPost(props: {
 
   React.useEffect(() => {
     if (ref.current) {
+      //@ts-ignore
       ref.current.focus();
     }
   }, []);

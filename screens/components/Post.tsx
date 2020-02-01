@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import moment from "moment";
 import { View } from "react-native";
 
@@ -19,14 +19,13 @@ import { Avatar as UserAvatar } from "./Avatar";
 import { useAuth } from "../AuthProvider";
 import { useFirebase } from "../../App";
 
-type Props = {
-  post: PostT;
-  onRemoveSuccess: () => void;
-  onRemoveError: () => void;
-  onEdit: () => void;
+type AuthorDetailsProps = {
+  id: string | null;
+  email: string | null;
+  children: ReactElement;
 };
 
-export function AuthorDetails({ id, email, children }) {
+export function AuthorDetails({ id, email, children }: AuthorDetailsProps) {
   return (
     <View
       style={{
@@ -37,12 +36,21 @@ export function AuthorDetails({ id, email, children }) {
     >
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <UserAvatar id={id} email={email} />
-        <Text style={{ marginLeft: 16 }}>{User.renderName(email)}</Text>
+        <Text style={{ marginLeft: 16 }}>
+          {email ? User.renderName(email) : "N/A"}
+        </Text>
       </View>
       {children}
     </View>
   );
 }
+
+type Props = {
+  post: PostT;
+  onRemoveSuccess: () => void;
+  onRemoveError: () => void;
+  onEdit: () => void;
+};
 
 export function Post(props: Props) {
   const { post: p } = props;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { SetStateAction } from "react";
 import { StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native";
 
 import { FAB, ActivityIndicator, Snackbar } from "react-native-paper";
@@ -14,9 +14,9 @@ import { useAuth } from "./AuthProvider";
 export default function MainScreen() {
   const [visible, setVisible] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
-  const [editedId, setEditedId] = React.useState(null);
+  const [editedId, setEditedId] = React.useState<string | null>(null);
   const [newPost, setNewPost] = React.useState("");
-  const [posts, setPosts] = React.useState([]);
+  const [posts, setPosts] = React.useState<Array<PostT>>([]);
   const firebase = useFirebase();
   const [snackBarVisible, setSnackBarVisible] = React.useState(false);
   const [snackBarMessage, setSnackBarMessage] = React.useState("");
@@ -26,27 +26,29 @@ export default function MainScreen() {
     const posts = firebase.database().ref("comments");
     setLoading(true);
     posts.on("value", function(snapshot) {
-      const posts = snapshot.val() || {};
+      const posts: { [key: string]: PostT } = snapshot.val() || {};
       const keys: Array<string> = Object.keys(posts) || [];
-      const newPosts = keys
-        .reduce((acc, key) => {
+      const newPosts: Array<PostT> = keys
+        .reduce((acc: Array<PostT>, key: string) => {
+          const post = posts[key];
           return acc.concat([
             {
               id: key,
-              ...posts[key]
+              ...post
             }
           ]);
         }, [])
         .sort((a, b) => b.date - a.date);
-      setPosts(newPosts);
+
+      setPosts(() => newPosts);
       setLoading(false);
     });
   }, []);
 
   const postsView =
-    posts.length !== 0 && !loading && !visible ? (
+    posts && posts.length !== 0 && !loading && !visible ? (
       <ScrollView>
-        {posts.map(p => (
+        {posts.map((p: PostT) => (
           <Post
             key={p.id}
             post={p}
