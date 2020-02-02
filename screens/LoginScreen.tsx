@@ -12,7 +12,6 @@ import {
   Text,
   Caption,
   Title,
-  Snackbar,
   Avatar
 } from "react-native-paper";
 
@@ -21,6 +20,7 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import { useNavigation } from "@react-navigation/native";
 import { useFirebase } from "../App";
 import { useAuth } from "./AuthProvider";
+import { useNotify } from "./NotificationProvider";
 
 const schema = yup.object({
   email: yup
@@ -38,9 +38,7 @@ const initialValues = {
 export default function LoginScreen() {
   const nav = useNavigation();
   const firebase = useFirebase();
-
-  const [visible, setVisible] = React.useState(false);
-  const [message, setMessage] = React.useState("");
+  const notification = useNotify();
 
   const { setAuth } = useAuth();
 
@@ -56,8 +54,7 @@ export default function LoginScreen() {
             const user = res.user;
             if (user && user.emailVerified) {
               return user.getIdToken().then(token => {
-                setMessage("Pomyślnie zalogowano");
-                setVisible(true);
+                notification.success("Pomyślnie zalogowano");
                 setAuth({
                   uid: user.uid,
                   email: user.email,
@@ -65,14 +62,12 @@ export default function LoginScreen() {
                 });
               });
             } else {
-              setMessage("Email nie został potwierdzony");
+              notification.info("Email nie został potwierdzony");
             }
-            setVisible(true);
             return null;
           })
           .catch(() => {
-            setMessage("Nie udało się zalogować, spróbuj ponownie poźniej");
-            setVisible(true);
+            notification.error("Coś poszło nie tak");
           })
       }
       validateOnChange
@@ -145,10 +140,6 @@ export default function LoginScreen() {
                 <Text style={{ textAlign: "center" }}>Zarejestruj się</Text>
               </Button>
             </View>
-
-            <Snackbar visible={visible} onDismiss={() => setVisible(false)}>
-              {message}
-            </Snackbar>
           </KeyboardAwareScrollView>
         );
       }}
