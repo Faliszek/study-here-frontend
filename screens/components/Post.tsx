@@ -6,11 +6,11 @@ import {
   Portal,
   Dialog,
   Button,
-  Surface,
+  Card,
   Paragraph,
   Caption,
-  Text,
-  Colors
+  Colors,
+  Subheading
 } from "react-native-paper";
 
 import * as User from "../user";
@@ -18,11 +18,12 @@ import * as User from "../user";
 import { Avatar as UserAvatar } from "./Avatar";
 import { useAuth } from "../AuthProvider";
 import { useFirebase } from "../../App";
+import { useNotify } from "../NotificationProvider";
 
 type AuthorDetailsProps = {
   id: string | null;
   email: string | null;
-  children: ReactElement;
+  children: ReactElement | null;
 };
 
 export function AuthorDetails({ id, email, children }: AuthorDetailsProps) {
@@ -36,9 +37,9 @@ export function AuthorDetails({ id, email, children }: AuthorDetailsProps) {
     >
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <UserAvatar id={id} email={email} />
-        <Text style={{ marginLeft: 16 }}>
+        <Subheading style={{ marginLeft: 16 }}>
           {email ? User.renderName(email) : "N/A"}
-        </Text>
+        </Subheading>
       </View>
       {children}
     </View>
@@ -47,24 +48,31 @@ export function AuthorDetails({ id, email, children }: AuthorDetailsProps) {
 
 type Props = {
   post: PostT;
-  onRemoveSuccess: () => void;
-  onRemoveError: () => void;
   onEdit: () => void;
+  onPress?: () => void;
+  parentId?: string;
 };
 
 export function Post(props: Props) {
   const { post: p } = props;
   const { auth } = useAuth();
+  const notification = useNotify();
+
   const firebase = useFirebase();
   const [visible, setVisible] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
+  const onRemoveSuccess = () =>
+    notification.success("Pomyślnie usunięto wpis!");
+  const onRemoveError = () =>
+    notification.error("Coś poszło nie tak, nie udało się usunąć wpisu");
   return (
-    <Surface
+    <Card
       key={p.id}
+      onPress={props.onPress}
       style={{
         elevation: 2,
-        paddingVertical: 8,
+        paddingVertical: 16,
         paddingHorizontal: 16,
         marginBottom: 8
       }}
@@ -95,13 +103,17 @@ export function Post(props: Props) {
                   loading={loading}
                   color={Colors.red600}
                   onPress={() => {
+                    const uri = props.parentId
+                      ? `posts/${props.parentId}/comments/${p.id}`
+                      : `posts/${p.id}`;
+
                     setLoading(true);
                     firebase
                       .database()
-                      .ref(`comments/${p.id}`)
+                      .ref(uri)
                       .remove()
-                      .then(props.onRemoveSuccess)
-                      .catch(props.onRemoveError)
+                      .then(onRemoveSuccess)
+                      .catch(onRemoveError)
                       .finally(() => {
                         setLoading(false);
                         setVisible(false);
@@ -115,6 +127,6 @@ export function Post(props: Props) {
           </Portal>
         </View>
       )}
-    </Surface>
+    </Card>
   );
 }

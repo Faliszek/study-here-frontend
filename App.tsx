@@ -2,39 +2,32 @@ import React, { useState } from "react";
 import { AppLoading } from "expo";
 import { Asset } from "expo-asset";
 import * as Font from "expo-font";
-import { Platform, StyleSheet, View, StatusBar } from "react-native";
+import { StyleSheet, View, StatusBar } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import MainScreen from "./screens/MainScreen";
-import SettingsScreen from "./screens/SettingsScreen";
 
 import LoginScreen from "./screens/LoginScreen";
 import RegisterScreen from "./screens/RegisterScreen";
 import RegisterInfoScreen from "./screens/RegisterInfoScreen";
-import ConfirmEmailScreen from './screens/ConfirmEmailScreen';
+import ConfirmEmailScreen from "./screens/ConfirmEmailScreen";
+import PostScreen from "./screens/PostScreen";
+import NewPostScreen from "./screens/NewPostScreen";
 
-import {
-  Appbar,
-  DefaultTheme,
-  Provider as PaperProvider,
-  Menu
-} from "react-native-paper";
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 
 import { NavigationNativeContainer } from "@react-navigation/native";
 
 import { createStackNavigator } from "@react-navigation/stack";
-import { createMaterialBottomTabNavigator } from "@react-navigation/material-bottom-tabs";
 
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
 import { AuthProvider } from "./screens/AuthProvider";
-import { useNavigation } from "@react-navigation/native";
-import { NavBar } from "./screens/components/NavBar";
-import {JSXElement} from "@babel/types";
+import { Provider as NotificationProvider } from "./screens/NotificationProvider";
 
 const Stack = createStackNavigator();
-const MenuStack = createMaterialBottomTabNavigator();
+const MainStack = createStackNavigator();
 
 const firebaseConfig = {
   apiKey: "AIzaSyA5Yw093poLsBoAjQgZBUcvZaPdQ_giRAw",
@@ -72,8 +65,8 @@ const theme = {
   }
 };
 
-interface AppProps{
-  skipLoadingScreen: boolean,
+interface AppProps {
+  skipLoadingScreen: boolean;
 }
 
 export default function App(props: AppProps) {
@@ -85,42 +78,37 @@ export default function App(props: AppProps) {
 
   if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
-        // @ts-ignore
-        <AppLoading
-          startAsync={loadResourcesAsync}
-          onError={handleLoadingError}
-          onFinish={() => handleFinishLoading()}
-        />
+      // @ts-ignore
+      <AppLoading
+        startAsync={loadResourcesAsync}
+        onError={handleLoadingError}
+        onFinish={() => handleFinishLoading()}
+      />
     );
   }
   return (
-      <>
-        <StatusBar barStyle="dark-content" />
-        <AuthProvider>
-          {({ auth }) => (
-            <>
-              <PaperProvider theme={theme}>
+    <>
+      <StatusBar barStyle="dark-content" />
+      <AuthProvider>
+        {({ auth }) => (
+          <>
+            <PaperProvider theme={theme}>
+              <NotificationProvider>
                 <View style={styles.container}>
                   {auth.token ? (
                     <NavigationNativeContainer>
-                      <MenuStack.Navigator initialRouteName="Main">
-                        <MenuStack.Screen
-                          name="Main"
-                          component={MainScreen}
-                          options={{
-                            tabBarIcon: "newspaper",
-                            tabBarLabel: "Feed"
-                          }}
+                      <MainStack.Navigator
+                        initialRouteName="Main"
+                        headerMode="none"
+                        mode="modal"
+                      >
+                        <MainStack.Screen name="Main" component={MainScreen} />
+                        <MainStack.Screen name="Post" component={PostScreen} />
+                        <MainStack.Screen
+                          name="WritePost"
+                          component={NewPostScreen}
                         />
-                        <MenuStack.Screen
-                          name="Settings"
-                          component={SettingsScreen}
-                          options={{
-                            tabBarIcon: "settings",
-                            tabBarLabel: "Ustawienia"
-                          }}
-                        />
-                      </MenuStack.Navigator>
+                      </MainStack.Navigator>
                     </NavigationNativeContainer>
                   ) : (
                     <NavigationNativeContainer>
@@ -129,10 +117,7 @@ export default function App(props: AppProps) {
                         headerMode="none"
                         mode="card"
                       >
-                        <Stack.Screen
-                            name="Login"
-                            component={LoginScreen}
-                        />
+                        <Stack.Screen name="Login" component={LoginScreen} />
                         <Stack.Screen
                           name="Register"
                           component={RegisterScreen}
@@ -142,19 +127,20 @@ export default function App(props: AppProps) {
                           component={RegisterInfoScreen}
                         />
                         <Stack.Screen
-                            name="ConfirmEmail"
-                            component={ConfirmEmailScreen}
+                          name="ConfirmEmail"
+                          component={ConfirmEmailScreen}
                         />
                       </Stack.Navigator>
                     </NavigationNativeContainer>
                   )}
                 </View>
-              </PaperProvider>
-            </>
-          )}
-        </AuthProvider>
-      </>
-    );
+              </NotificationProvider>
+            </PaperProvider>
+          </>
+        )}
+      </AuthProvider>
+    </>
+  );
 }
 
 async function loadResourcesAsync() {
@@ -178,8 +164,6 @@ function handleLoadingError(error: Error) {
   // service, for example Sentry
   console.warn(error);
 }
-
-
 
 const styles = StyleSheet.create({
   container: {

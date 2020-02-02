@@ -1,32 +1,42 @@
-import React, { SetStateAction } from "react";
+import React from "react";
 import { StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native";
 
-import { FAB, ActivityIndicator, Snackbar } from "react-native-paper";
+import { FAB, ActivityIndicator } from "react-native-paper";
 
 import { Post } from "./components/Post";
 import { NoData } from "./components/NoData";
-import NewPostScreen from "./NewPostScreen";
+// import NewPostScreen from "./NewPostScreen";
 
 import { useFirebase } from "../App";
 import { NavBar } from "./components/NavBar";
-import { useAuth } from "./AuthProvider";
+
+import { useNavigation } from "@react-navigation/native";
+import { CommonActions } from "@react-navigation/native";
 
 export default function MainScreen() {
-  const [visible, setVisible] = React.useState(false);
+  const nav = useNavigation();
   const [loading, setLoading] = React.useState(false);
-  const [editedId, setEditedId] = React.useState<string | null>(null);
-  const [newPost, setNewPost] = React.useState("");
   const [posts, setPosts] = React.useState<Array<PostT>>([]);
   const firebase = useFirebase();
-  const [snackBarVisible, setSnackBarVisible] = React.useState(false);
-  const [snackBarMessage, setSnackBarMessage] = React.useState("");
 
-  const auth = useAuth();
+  const goToCreatePost = () =>
+    nav.dispatch(
+      CommonActions.navigate({ name: "WritePost", params: { type: "newPost" } })
+    );
+
+  const goToEditPost = (payload: PostT) =>
+    nav.dispatch(
+      CommonActions.navigate({
+        name: "WritePost",
+        params: { type: "editPost", payload }
+      })
+    );
+
   React.useEffect(() => {
-    const posts = firebase.database().ref("comments");
+    const posts = firebase.database().ref("posts");
     setLoading(true);
     posts.on("value", function(snapshot) {
-      const posts: { [key: string]: PostT } = snapshot.val() || {};
+      const posts: { [key: string]: PostFirebase } = snapshot.val() || {};
       const keys: Array<string> = Object.keys(posts) || [];
       const newPosts: Array<PostT> = keys
         .reduce((acc: Array<PostT>, key: string) => {
@@ -45,65 +55,48 @@ export default function MainScreen() {
     });
   }, []);
 
+  const jumpToPost = (id: string) =>
+    nav.dispatch(
+      CommonActions.navigate({
+        name: "Post",
+        params: {
+          id
+        }
+      })
+    );
+
   const postsView =
-    posts && posts.length !== 0 && !loading && !visible ? (
+    posts && posts.length !== 0 && !loading ? (
       <ScrollView>
         {posts.map((p: PostT) => (
           <Post
             key={p.id}
             post={p}
             onEdit={() => {
-              setNewPost(p.content);
-              setVisible(true);
-              setEditedId(p.id);
+              goToEditPost(p);
             }}
-            onRemoveSuccess={() => {
-              setSnackBarMessage("Pomyślnie usunięto wpis");
-              setSnackBarVisible(true);
-            }}
-            onRemoveError={() => {
-              setSnackBarMessage("Nie udało się usunąć wpisu");
-              setSnackBarVisible(true);
-            }}
+            onPress={() => jumpToPost(p.id)}
           />
         ))}
       </ScrollView>
     ) : null;
 
-  const loader =
-    loading && !visible ? (
-      <ActivityIndicator
-        animating={true}
-        size="large"
-        style={{ marginTop: 64 }}
-      />
-    ) : null;
-
-  const noData =
-    posts.length === 0 && !loading && !visible ? (
-      <NoData onClick={() => setVisible(true)} />
-    ) : null;
-
-  const newPostView = visible ? (
-    <NewPostScreen
-      editedId={editedId}
-      value={newPost}
-      onChange={value => setNewPost(value)}
-      onAdd={() => {
-        setVisible(false);
-        setNewPost("");
-      }}
-      onFinishEdit={() => {
-        setEditedId(null);
-        setVisible(false);
-        setNewPost("");
-      }}
+  const loader = loading ? (
+    <ActivityIndicator
+      animating={true}
+      size="large"
+      style={{ marginTop: 64 }}
     />
   ) : null;
 
+  const noData =
+    posts.length === 0 && !loading ? (
+      <NoData onClick={() => goToCreatePost()} />
+    ) : null;
+
   return (
     <>
-      <NavBar signOut={auth.signOut} title={"Posty"} />
+      <NavBar title={"Posty"} />
       <KeyboardAvoidingView
         behavior={"height"}
         style={styles.container}
@@ -113,18 +106,12 @@ export default function MainScreen() {
         {noData}
         {postsView}
         {loader}
-        {newPostView}
-        <Snackbar
-          visible={snackBarVisible}
-          onDismiss={() => setSnackBarVisible(false)}
-        >
-          {snackBarMessage}
-        </Snackbar>
+
         <FAB
           color={"white"}
           style={styles.fab}
-          icon={visible ? "close" : "plus"}
-          onPress={() => setVisible(v => !v)}
+          icon={"plus"}
+          onPress={() => goToCreatePost()}
         />
       </KeyboardAvoidingView>
     </>

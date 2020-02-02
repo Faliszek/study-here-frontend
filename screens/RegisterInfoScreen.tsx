@@ -7,7 +7,14 @@ export default function RegisterInfoScreen() {
   const nav = useNavigation();
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 16
+      }}
+    >
       <View style={{ justifyContent: "center", alignItems: "center" }}>
         <Avatar.Icon
           icon="chat-alert"
@@ -18,10 +25,14 @@ export default function RegisterInfoScreen() {
         <Title style={{ textAlign: "center" }}>Ważna informacja!</Title>
         <View style={{ height: 15 }} />
         <Paragraph style={{ textAlign: "center" }}>
-          Aby móc zarejestrować się w aplikacji należy posiadać e-mail w domenie{" "}
+          Aby móc zarejestrować się w aplikacji należy posiadać e-mail w domenie
           <Paragraph style={{ fontWeight: "bold" }}>
+            {" "}
             @student.up.krakow.pl
           </Paragraph>
+          <Paragraph> jeśli jesteś studentem lub</Paragraph>
+          <Paragraph style={{ fontWeight: "bold" }}> @up.krakow.pl</Paragraph>
+          <Paragraph> jeśli jesteś wykładowcą</Paragraph>
         </Paragraph>
 
         <View style={{ height: 40 }} />

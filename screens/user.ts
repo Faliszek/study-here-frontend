@@ -39,3 +39,10 @@ export function getColor(id: string) {
 
   return `rgb(${red},${green} ,${blue} )`;
 }
+
+export function isTeacher(email: string) {
+  //@ts-ignore
+  const [, domain] = email.split("@");
+
+  return !domain.split(".").includes("student");
+}
