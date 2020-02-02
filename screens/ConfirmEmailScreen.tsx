@@ -25,7 +25,7 @@ export default function ConfirmEmailScreen() {
         <Title style={{ textAlign: "center" }}>Ważna informacja!</Title>
         <View style={{ height: 15 }} />
         <Paragraph style={{ textAlign: "center" }}>
-          Dostałeś wiadomość email, aby zweryfikować swoje konto, zaloguj się po
+          Dostałeś wiadomość email, aby zweryfikować swoje konto. Zaloguj się po
           potwierdzeniu
         </Paragraph>
 
@@ -33,7 +33,7 @@ export default function ConfirmEmailScreen() {
           <Paragraph style={{ textAlign: "center", fontWeight: "bold" }}>
             UWAGA!{" "}
           </Paragraph>
-          <Paragraph>Poszukaj też w spamie ;)</Paragraph>
+          <Paragraph>Poszukaj też w spamie 😉</Paragraph>
         </Paragraph>
 
         <View style={{ height: 40 }} />

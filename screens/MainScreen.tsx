@@ -1,7 +1,14 @@
 import React from "react";
-import { StyleSheet, ScrollView, KeyboardAvoidingView } from "react-native";
+import { StyleSheet, ScrollView, View } from "react-native";
 
-import { FAB, ActivityIndicator } from "react-native-paper";
+import {
+  FAB,
+  ActivityIndicator,
+  Caption,
+  Button,
+  Colors,
+  Text
+} from "react-native-paper";
 
 import { Post } from "./components/Post";
 import { NoData } from "./components/NoData";
@@ -68,16 +75,36 @@ export default function MainScreen() {
   const postsView =
     posts && posts.length !== 0 && !loading ? (
       <ScrollView>
-        {posts.map((p: PostT) => (
-          <Post
-            key={p.id}
-            post={p}
-            onEdit={() => {
-              goToEditPost(p);
-            }}
-            onPress={() => jumpToPost(p.id)}
-          />
-        ))}
+        <View style={styles.container}>
+          {posts.map((p: PostT) => {
+            const length = p.comments ? Object.keys(p.comments).length : 0;
+            return (
+              <Post
+                key={p.id}
+                post={p}
+                onEdit={() => {
+                  goToEditPost(p);
+                }}
+                onPress={() => jumpToPost(p.id)}
+              >
+                <View style={{ justifyContent: "flex-end" }}>
+                  <View>
+                    <Caption style={{ textAlign: "right", marginBottom: 16 }}>
+                      Ilość komentarzy: {length}
+                    </Caption>
+                    <Button
+                      icon="comment-processing"
+                      mode="contained"
+                      onPress={() => jumpToPost(p.id)}
+                    >
+                      Komentarze
+                    </Button>
+                  </View>
+                </View>
+              </Post>
+            );
+          })}
+        </View>
       </ScrollView>
     ) : null;
 
@@ -97,12 +124,7 @@ export default function MainScreen() {
   return (
     <>
       <NavBar title={"Posty"} />
-      <KeyboardAvoidingView
-        behavior={"height"}
-        style={styles.container}
-        enabled
-        keyboardVerticalOffset={84}
-      >
+      <View style={styles.container}>
         {noData}
         {postsView}
         {loader}
@@ -113,7 +135,7 @@ export default function MainScreen() {
           icon={"plus"}
           onPress={() => goToCreatePost()}
         />
-      </KeyboardAvoidingView>
+      </View>
     </>
   );
 }

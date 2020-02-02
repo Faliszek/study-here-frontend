@@ -78,28 +78,30 @@ export default function PostScreen(props: { route: { params: any } }) {
 
   const comments =
     data && data.comments && !loading ? (
-      <View style={{ paddingLeft: 16 }}>
+      <View style={{ paddingLeft: 16, flex: 2 }}>
         <Title style={{ marginBottom: 24 }}>Komentarze: </Title>
 
         <ScrollView>
-          {data.comments.length === 0 ? (
-            <NoData
-              onClick={() => data && goToNewComment(data)}
-              text="Kliknij dodaj w celu skomentowania"
-              action="Dodaj"
-            />
-          ) : (
-            data.comments.map((p: PostT) => (
-              <Comment
-                key={p.id}
-                post={p}
-                onEdit={() => {
-                  p && goToEditComment(p);
-                }}
-                parentId={id}
+          <View style={styles.container}>
+            {data.comments.length === 0 ? (
+              <NoData
+                onClick={() => data && goToNewComment(data)}
+                text="Kliknij dodaj w celu skomentowania"
+                action="Dodaj"
               />
-            ))
-          )}
+            ) : (
+              data.comments.map((p: PostT) => (
+                <Comment
+                  key={p.id}
+                  post={p}
+                  onEdit={() => {
+                    p && goToEditComment(p);
+                  }}
+                  parentId={id}
+                />
+              ))
+            )}
+          </View>
         </ScrollView>
       </View>
     ) : null;
