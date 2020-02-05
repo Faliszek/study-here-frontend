@@ -18,7 +18,7 @@
     },
     "assetBundlePatterns": ["**/*"],
     "android": {
-      "package": "com.falisz.study_here"
+      "package": "com.up.study_here"
     },
 
     "ios": {
