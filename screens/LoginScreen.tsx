@@ -67,7 +67,9 @@ export default function LoginScreen() {
             return null;
           })
           .catch(() => {
-            notification.error("Coś poszło nie tak");
+            notification.error(
+              "Coś poszło nie tak, upewnij się, że dane logowania są poprawne"
+            );
           })
       }
       validateOnChange

@@ -32,7 +32,7 @@ export default function RegisterInfoScreen() {
           </Paragraph>
           <Paragraph> jeśli jesteś studentem lub</Paragraph>
           <Paragraph style={{ fontWeight: "bold" }}> @up.krakow.pl</Paragraph>
-          <Paragraph> jeśli jesteś wykładowcą</Paragraph>
+          <Paragraph> jeśli jesteś wykładowcą.</Paragraph>
         </Paragraph>
 
         <View style={{ height: 40 }} />
